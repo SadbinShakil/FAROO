@@ -1,33 +1,27 @@
+import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import path from 'path';
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<NextResponse> {
     try {
-        const formData = await request.formData();
-        const file = formData.get('file');
+        const { searchParams } = new URL(request.url);
+        const filename = searchParams.get('filename');
 
-        if (!file || !(file instanceof File)) {
-            return NextResponse.json(
-                { error: 'No file received.' },
-                { status: 400 }
-            );
+        if (!filename) {
+            return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
         }
 
-        const buffer = Buffer.from(await file.arrayBuffer());
-        const filename = Date.now() + '-' + file.name.replaceAll(' ', '_');
+        if (!request.body) {
+            return NextResponse.json({ error: 'No file body received' }, { status: 400 });
+        }
 
-        // Ensure path exists - we created it with mkdir -p public/uploads
-        const uploadDir = path.join(process.cwd(), 'public/uploads');
-        // If we strictly wanted to be safe we'd check/mkdir here too, but we did it in CLI
-
-        const filepath = path.join(uploadDir, filename);
-
-        await writeFile(filepath, buffer);
+        // Direct blob upload is more efficient on Vercel
+        const blob = await put(filename, request.body, {
+            access: 'public',
+        });
 
         return NextResponse.json({
             success: true,
-            url: `/uploads/${filename}`
+            url: blob.url
         });
     } catch (error) {
         console.error('Upload error:', error);

@@ -81,20 +81,19 @@ export default function AdminProducts() {
 
         setUploading(true);
         const file = e.target.files[0];
-        const data = new FormData();
-        data.append('file', file);
 
         try {
-            const res = await fetch('/api/upload', {
+            // Updated to use Vercel Blob direct upload via our API
+            const res = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
                 method: 'POST',
-                body: data
+                body: file,
             });
 
             if (res.ok) {
                 const result = await res.json();
                 setFormData(prev => ({ ...prev, image: result.url }));
             } else {
-                alert('Upload failed');
+                alert('Upload failed. Please ensure Vercel Blob is configured.');
             }
         } catch (err) {
             console.error('Upload Error:', err);
