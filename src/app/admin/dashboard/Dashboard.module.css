@@ -323,63 +323,99 @@
 }
 
 @media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        display: block;
+        /* Ensure it doesn't try to be sideways */
+    }
+
     .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
         padding: 1rem 0;
     }
 
     .logo {
-        padding: 0 1.5rem 1rem;
+        padding: 0 1rem 1rem;
+        text-align: center;
     }
 
     .nav {
-        padding: 1rem 0;
+        padding: 0.5rem 0;
         flex-direction: row;
         overflow-x: auto;
         gap: 0.25rem;
+        display: flex;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth scrolling for iOS */
     }
 
     .navItem,
     .navItemActive {
-        padding: 0.75rem 1rem;
-        font-size: 0.85rem;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
         white-space: nowrap;
-        border-left: none;
+        border-left: none !important;
         border-bottom: 3px solid transparent;
+        flex-shrink: 0;
     }
 
     .navItemActive {
-        border-left: none;
         border-bottom: 3px solid #667eea;
         background: rgba(102, 126, 234, 0.1);
     }
 
     .logoutBtn {
-        margin: 0.5rem 1.5rem;
+        margin: 0.5rem 1rem;
+        padding: 0.6rem;
+        font-size: 0.85rem;
     }
 
     .main {
-        margin-left: 0;
-        padding: 1.5rem;
+        margin-left: 0 !important;
+        padding: 1rem;
+        width: 100% !important;
+        overflow-x: hidden;
+        /* Prevent horizontal body scroll */
     }
 
     .header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
     }
 
     .statsGrid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .contentGrid {
+        grid-template-columns: 1fr;
         gap: 1.5rem;
     }
 
-    /* Hide less important columns on mobile for better fit */
-    .table th:nth-child(n+3),
-    .table td:nth-child(n+3) {
-        display: none;
+    /* Make THE TABLE scrollable so it doesn't push the screen out */
+    .table {
+        margin: 0 -1rem;
+        /* Full width bleed on mobile */
+        padding: 0 1rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        width: calc(100% + 2rem);
+    }
+
+    .table table {
+        min-width: 600px;
+        /* Force minimum width to trigger scrollbar */
+    }
+
+    /* Small header for stats on mobile */
+    .statValue {
+        font-size: 1.4rem;
+    }
+
+    .statIcon {
+        width: 45px;
+        height: 45px;
     }
 }
