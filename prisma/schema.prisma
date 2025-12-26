@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  title       String
+  price       Float
+  category    String
+  section     String
+  subcategory String
+  image       String
+  description String?
+  sizes       String      // Stored as JSON string
+  colors      String?     // Stored as JSON string
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  orderNumber      String      @unique
+  customerName     String
+  customerEmail    String
+  customerPhone    String
+  subtotal         Float
+  discount         Float
+  discountCode     String?
+  shipping         Float
+  total            Float
+  status           String
+  paymentStatus    String
+  paymentMethod    String
+  
+  // Shipping Address Flattened
+  shippingStreet   String
+  shippingCity     String
+  shippingState    String
+  shippingPincode  String
+  shippingCountry  String
+
+  items            OrderItem[]
+  notes            String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+}
+
+model OrderItem {
+  id           String  @id @default(cuid())
+  orderId      String
+  order        Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId    String
+  product      Product @relation(fields: [productId], references: [id])
+  productTitle String
+  quantity     Int
+  price        Float
+  size         String?
+  color        String?
+}
+
+model Discount {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  type        String
+  value       Float
+  description String
+  validFrom   DateTime
+  validUntil  DateTime
+  minPurchase Float?
+  maxDiscount Float?
+  active      Boolean  @default(true)
+  usageCount  Int      @default(0)
+  maxUsage    Int?
+}
