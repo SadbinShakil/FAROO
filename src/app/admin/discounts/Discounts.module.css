@@ -411,3 +411,42 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .addBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .discountsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .codeBox {
+        padding: 0.5rem;
+    }
+
+    .code {
+        font-size: 0.9rem;
+    }
+
+    .percentage,
+    .fixed {
+        font-size: 1.25rem;
+        padding: 0.6rem 1.25rem;
+    }
+
+    .modalContent {
+        padding: 1.5rem;
+    }
+
+    .modalContent h2 {
+        font-size: 1.4rem;
+    }
+}

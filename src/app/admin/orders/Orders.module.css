@@ -375,3 +375,56 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
+
+@media (max-width: 1024px) {
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .filterButtons {
+        gap: 0.5rem;
+    }
+
+    .filterBtn,
+    .filterActive {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .exportBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Hide detailed columns on mobile to prevent horizontal scroll */
+    .ordersTable th:nth-child(n+4):not(:last-child),
+    .ordersTable td:nth-child(n+4):not(:last-child) {
+        display: none;
+    }
+
+    .ordersTable th,
+    .ordersTable td {
+        padding: 0.75rem;
+    }
+
+    .modalContent {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .modalContent h2 {
+        font-size: 1.4rem;
+    }
+
+    .detailSection {
+        padding: 1rem;
+    }
+}

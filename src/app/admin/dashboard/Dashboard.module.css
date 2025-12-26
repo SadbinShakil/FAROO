@@ -314,3 +314,72 @@
     color: #999;
     font-size: 0.85rem;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 1024px) {
+    .main {
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        padding: 1rem 0;
+    }
+
+    .logo {
+        padding: 0 1.5rem 1rem;
+    }
+
+    .nav {
+        padding: 1rem 0;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: 0.25rem;
+    }
+
+    .navItem,
+    .navItemActive {
+        padding: 0.75rem 1rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+
+    .navItemActive {
+        border-left: none;
+        border-bottom: 3px solid #667eea;
+        background: rgba(102, 126, 234, 0.1);
+    }
+
+    .logoutBtn {
+        margin: 0.5rem 1.5rem;
+    }
+
+    .main {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+    }
+
+    .statsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .contentGrid {
+        gap: 1.5rem;
+    }
+
+    /* Hide less important columns on mobile for better fit */
+    .table th:nth-child(n+3),
+    .table td:nth-child(n+3) {
+        display: none;
+    }
+}

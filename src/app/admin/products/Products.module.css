@@ -327,3 +327,46 @@
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
 }
+
+@media (max-width: 1024px) {
+    .searchBox {
+        min-width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .addBtn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .filterButtons {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        display: flex;
+    }
+
+    .filterButtons button {
+        white-space: nowrap;
+    }
+
+    .productsGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .modalContent {
+        padding: 1.5rem;
+        width: 95%;
+    }
+
+    .modalContent h2 {
+        font-size: 1.4rem;
+    }
+}
