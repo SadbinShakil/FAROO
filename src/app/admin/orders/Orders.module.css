@@ -397,6 +397,11 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
     }
 
     .exportBtn {
@@ -404,27 +409,47 @@
         justify-content: center;
     }
 
-    /* Hide detailed columns on mobile to prevent horizontal scroll */
-    .ordersTable th:nth-child(n+4):not(:last-child),
-    .ordersTable td:nth-child(n+4):not(:last-child) {
-        display: none;
+    .filters {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
     }
 
-    .ordersTable th,
-    .ordersTable td {
-        padding: 0.75rem;
+    .searchBox {
+        padding: 0.75rem 1rem;
+    }
+
+    .filterButtons {
+        display: flex;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .filterBtn,
+    .filterActive {
+        white-space: nowrap;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
+    }
+
+    /* Force the orders table to SCROLL internally instead of breaking the page */
+    .ordersTable {
+        margin: 0 -1rem;
+        padding: 0 1rem;
+        width: calc(100% + 2rem);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .ordersTable table {
+        min-width: 800px;
+        /* Force minimum width to allow scrolling through all data */
     }
 
     .modalContent {
         padding: 1.5rem;
         width: 95%;
-    }
-
-    .modalContent h2 {
-        font-size: 1.4rem;
-    }
-
-    .detailSection {
-        padding: 1rem;
+        max-height: 85vh;
     }
 }

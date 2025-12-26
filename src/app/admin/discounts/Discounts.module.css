@@ -417,6 +417,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .addBtn {
@@ -426,6 +427,7 @@
 
     .discountsGrid {
         grid-template-columns: 1fr;
+        gap: 1rem;
     }
 
     .codeBox {
@@ -444,6 +446,8 @@
 
     .modalContent {
         padding: 1.5rem;
+        width: 95%;
+        max-height: 85vh;
     }
 
     .modalContent h2 {

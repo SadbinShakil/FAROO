@@ -339,6 +339,7 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .addBtn {
@@ -346,27 +347,42 @@
         justify-content: center;
     }
 
+    .filters {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .searchBox {
+        min-width: 100%;
+    }
+
     .filterButtons {
         width: 100%;
         overflow-x: auto;
         padding-bottom: 0.5rem;
         display: flex;
+        -webkit-overflow-scrolling: touch;
     }
 
     .filterButtons button {
         white-space: nowrap;
+        padding: 0.6rem 1rem;
+        font-size: 0.8rem;
     }
 
     .productsGrid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .productCard {
+        width: 100%;
     }
 
     .modalContent {
         padding: 1.5rem;
         width: 95%;
-    }
-
-    .modalContent h2 {
-        font-size: 1.4rem;
+        max-height: 85vh;
     }
 }
