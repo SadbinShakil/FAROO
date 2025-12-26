@@ -39,5 +39,14 @@ Because this is a new database, it won't have your tables or products yet.
     ```
     *This will add your initial products to the live site.*
 
-### Why was it failing?
-Next.js was trying to build your site while Prisma was looking for a database connection that didn't exist yet. By connecting **Vercel Postgres** first, the variables will be ready when the build starts.
+### Step 5: Enable Image Uploads (Vercel Blob)
+Since Vercel is "serverless," we cannot save images directly to a folder. We now use **Vercel Blob** for storage.
+1.  Go to your project dashboard on Vercel.
+2.  Click on the **"Storage"** tab.
+3.  Click **"Create Database"** and select **"Blob"**.
+4.  Follow the prompts to create it.
+5.  Click **"Connect"** to link it to your project. This will automatically add `BLOB_READ_WRITE_TOKEN`.
+6.  **Redeploy** your app one last time.
+
+### Why was image upload failing?
+Vercel's file system is "Read-Only." When you tried to upload an image, the server couldn't write the file to the disk. By switching to Vercel Blob, your images are now stored securely in the cloud and will persist even when the site restarts.
