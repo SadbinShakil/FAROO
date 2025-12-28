@@ -83,21 +83,24 @@ export default function AdminProducts() {
         const file = e.target.files[0];
 
         try {
-            // Updated to use Vercel Blob direct upload via our API
-            const res = await fetch(`/api/upload?filename=${encodeURIComponent(file.name)}`, {
+            const formDataToSend = new FormData();
+            formDataToSend.append('file', file);
+
+            const res = await fetch('/api/upload', {
                 method: 'POST',
-                body: file,
+                body: formDataToSend,
             });
 
+            const result = await res.json();
+
             if (res.ok) {
-                const result = await res.json();
                 setFormData(prev => ({ ...prev, image: result.url }));
             } else {
-                alert('Upload failed. Please ensure Vercel Blob is configured.');
+                alert(`Upload failed: ${result.error || 'Please ensure Vercel Blob is configured.'}`);
             }
         } catch (err) {
             console.error('Upload Error:', err);
-            alert('Error uploading image');
+            alert('Error uploading image. Check your connection.');
         } finally {
             setUploading(false);
         }
@@ -127,6 +130,17 @@ export default function AdminProducts() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (uploading) {
+            alert('Please wait for the image to finish uploading...');
+            return;
+        }
+
+        // If it's a new product and no image is uploaded, confirm or block
+        if (!formData.image && !editingId) {
+            const useDefault = confirm('No image has been uploaded. A default product image will be used. Continue?');
+            if (!useDefault) return;
+        }
 
         const payload = {
             ...formData,

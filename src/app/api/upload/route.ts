@@ -3,19 +3,16 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request): Promise<NextResponse> {
     try {
-        const { searchParams } = new URL(request.url);
-        const filename = searchParams.get('filename');
+        // Try to get file from FormData first (more robust)
+        const formData = await request.formData();
+        const file = formData.get('file') as File;
 
-        if (!filename) {
-            return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
+        if (!file) {
+            return NextResponse.json({ error: 'No file received in FormData' }, { status: 400 });
         }
 
-        if (!request.body) {
-            return NextResponse.json({ error: 'No file body received' }, { status: 400 });
-        }
-
-        // Direct blob upload is more efficient on Vercel
-        const blob = await put(filename, request.body, {
+        // Direct blob upload
+        const blob = await put(file.name, file, {
             access: 'public',
         });
 
@@ -23,10 +20,19 @@ export async function POST(request: Request): Promise<NextResponse> {
             success: true,
             url: blob.url
         });
-    } catch (error) {
-        console.error('Upload error:', error);
+    } catch (error: any) {
+        console.error('Upload error details:', error);
+
+        // Handle specific error for missing token
+        const errorMessage = error.message || 'Error uploading file.';
+        const isTokenMissing = errorMessage.includes('BLOB_READ_WRITE_TOKEN');
+
         return NextResponse.json(
-            { error: 'Error uploading file.' },
+            {
+                error: isTokenMissing
+                    ? 'Vercel Blob token is missing. Please add BLOB_READ_WRITE_TOKEN to your .env file.'
+                    : errorMessage
+            },
             { status: 500 }
         );
     }
