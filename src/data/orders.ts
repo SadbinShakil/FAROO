@@ -46,14 +46,14 @@ export const ORDERS: Order[] = [
         items: [
             {
                 productId: 'w1',
-                productTitle: 'Striped Blue Tunic Set',
+                productTitle: 'Faroo "Noor" Embroidered Tunic',
                 quantity: 1,
-                price: 3500,
+                price: 4500,
                 size: 'M'
             },
             {
                 productId: 'w7',
-                productTitle: 'Pink Striped Sweater',
+                productTitle: 'Faroo "Luna" Striped Knit',
                 quantity: 2,
                 price: 2800,
                 size: 'L'
@@ -87,9 +87,9 @@ export const ORDERS: Order[] = [
         items: [
             {
                 productId: 'm5',
-                productTitle: 'Classic Denim Jeans',
+                productTitle: 'Faroo "Zayn" Linen Casual Shirt',
                 quantity: 1,
-                price: 4000,
+                price: 2800,
                 size: '32'
             }
         ],
@@ -118,17 +118,17 @@ export const ORDERS: Order[] = [
         customerPhone: '+91 76543 21098',
         items: [
             {
-                productId: 'w13',
-                productTitle: 'Black Cable Knit Cardigan',
+                productId: 'w8',
+                productTitle: 'Faroo Cable Knit Cardigan',
                 quantity: 1,
                 price: 3500,
                 size: 'S'
             },
             {
-                productId: 'w15',
-                productTitle: 'Beige Button Cardigan',
+                productId: 'w10',
+                productTitle: 'Faroo "Aria" Navy Bow Cardigan',
                 quantity: 1,
-                price: 3100,
+                price: 3300,
                 size: 'M'
             }
         ],
