@@ -64,12 +64,31 @@ export default function AdminOrders() {
         return matchesSearch && matchesStatus;
     });
 
-    const updateOrderStatus = (orderId: string, newStatus: Order['status']) => {
-        setOrders(orders.map(order =>
-            order.id === orderId
-                ? { ...order, status: newStatus, updatedAt: new Date() }
-                : order
-        ));
+    const updateOrderStatus = async (orderId: string, newStatus: Order['status']) => {
+        const orderToUpdate = orders.find(o => o.id === orderId);
+        if (!orderToUpdate) return;
+
+        try {
+            const res = await fetch(`/api/orders/${orderToUpdate.orderNumber}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (res.ok) {
+                setOrders(orders.map(order =>
+                    order.id === orderId
+                        ? { ...order, status: newStatus, updatedAt: new Date() }
+                        : order
+                ));
+            } else {
+                const error = await res.json();
+                alert(`Failed to update status: ${error.error}`);
+            }
+        } catch (error) {
+            console.error('Error updating order status:', error);
+            alert('An error occurred while updating status');
+        }
     };
 
     return (
@@ -189,7 +208,7 @@ export default function AdminOrders() {
                                         </div>
                                     </td>
                                     <td>{order.items.length} item(s)</td>
-                                    <td className={ordersStyles.amount}>₹{order.total.toLocaleString()}</td>
+                                    <td className={ordersStyles.amount}>৳{order.total.toLocaleString()}</td>
                                     <td>
                                         <select
                                             value={order.status}
@@ -273,12 +292,12 @@ export default function AdminOrders() {
 
                                 <div className={ordersStyles.detailSection}>
                                     <h3>Order Summary</h3>
-                                    <p><strong>Subtotal:</strong> ₹{selectedOrder.subtotal.toLocaleString()}</p>
+                                    <p><strong>Subtotal:</strong> ৳{selectedOrder.subtotal.toLocaleString()}</p>
                                     {selectedOrder.discount > 0 && (
-                                        <p><strong>Discount ({selectedOrder.discountCode}):</strong> -₹{selectedOrder.discount.toLocaleString()}</p>
+                                        <p><strong>Discount ({selectedOrder.discountCode}):</strong> -৳{selectedOrder.discount.toLocaleString()}</p>
                                     )}
-                                    <p><strong>Shipping:</strong> ₹{selectedOrder.shipping.toLocaleString()}</p>
-                                    <p className={ordersStyles.totalAmount}><strong>Total:</strong> ₹{selectedOrder.total.toLocaleString()}</p>
+                                    <p><strong>Shipping:</strong> ৳{selectedOrder.shipping.toLocaleString()}</p>
+                                    <p className={ordersStyles.totalAmount}><strong>Total:</strong> ৳{selectedOrder.total.toLocaleString()}</p>
                                 </div>
 
                                 {selectedOrder.notes && (

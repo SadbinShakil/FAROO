@@ -44,17 +44,36 @@ export async function PATCH(
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
         }
 
-        // Check if order is editable (e.g. within 30 mins)
+        // ADMIN ACTION: Update Status (Skip time check)
+        if (body.status && !body.action) {
+            const updatedOrder = await prisma.order.update({
+                where: { orderNumber },
+                data: {
+                    status: body.status,
+                    // If moving to shipped/delivered, we might want to update payment status too for COD
+                    paymentStatus: body.status === 'delivered' ? 'paid' : undefined
+                }
+            });
+            return NextResponse.json(updatedOrder);
+        }
+
+        // CUSTOMER ACTIONS: Subject to 30-minute rule
         const createdAt = new Date(order.createdAt).getTime();
         const now = new Date().getTime();
         const diffInMinutes = (now - createdAt) / 1000 / 60;
 
-        if (diffInMinutes > 30) {
-            return NextResponse.json({ error: 'Order modification period has expired' }, { status: 403 });
+        if (diffInMinutes > 1440 && process.env.NODE_ENV === 'production') { // Example: 24h for some leeway, but keep logic
+            // Keep original 30 min logic for the user-facing part if you want
         }
 
-        if (order.status !== 'pending') {
-            return NextResponse.json({ error: 'Order is already processing and cannot be modified' }, { status: 403 });
+        // Re-implementing the 30-min check for actions like 'cancel' or 'update_address'
+        if (body.action) {
+            if (diffInMinutes > 30) {
+                return NextResponse.json({ error: 'Order modification period has expired' }, { status: 403 });
+            }
+            if (order.status !== 'pending') {
+                return NextResponse.json({ error: 'Order is already processing' }, { status: 403 });
+            }
         }
 
         // Handle Cancellation
