@@ -284,7 +284,7 @@ export default function AdminOrders() {
                                     {selectedOrder.items.map((item, index) => (
                                         <div key={index} className={ordersStyles.orderItem}>
                                             <p><strong>{item.productTitle}</strong></p>
-                                            <p>Quantity: {item.quantity} × ₹{item.price.toLocaleString()}</p>
+                                            <p>Quantity: {item.quantity} × ৳{item.price.toLocaleString()}</p>
                                             {item.size && <p>Size: {item.size}</p>}
                                         </div>
                                     ))}

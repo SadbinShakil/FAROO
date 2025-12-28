@@ -136,7 +136,7 @@ export default function AdminDiscounts() {
                                     {discount.type === 'percentage' ? (
                                         <span className={discountsStyles.percentage}>{discount.value}% OFF</span>
                                     ) : (
-                                        <span className={discountsStyles.fixed}>₹{discount.value} OFF</span>
+                                        <span className={discountsStyles.fixed}>৳{discount.value} OFF</span>
                                     )}
                                 </div>
 
@@ -144,13 +144,13 @@ export default function AdminDiscounts() {
                                     {discount.minPurchase && (
                                         <div className={discountsStyles.detailItem}>
                                             <span className={discountsStyles.label}>Min Purchase:</span>
-                                            <span className={discountsStyles.value}>₹{discount.minPurchase.toLocaleString()}</span>
+                                            <span className={discountsStyles.value}>৳{discount.minPurchase.toLocaleString()}</span>
                                         </div>
                                     )}
                                     {discount.maxDiscount && (
                                         <div className={discountsStyles.detailItem}>
                                             <span className={discountsStyles.label}>Max Discount:</span>
-                                            <span className={discountsStyles.value}>₹{discount.maxDiscount.toLocaleString()}</span>
+                                            <span className={discountsStyles.value}>৳{discount.maxDiscount.toLocaleString()}</span>
                                         </div>
                                     )}
                                     <div className={discountsStyles.detailItem}>

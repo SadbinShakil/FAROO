@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import ProductCard from '@/components/ProductCard';
+import { Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import styles from './page.module.css';
 
 interface Product {
@@ -15,16 +16,15 @@ interface Product {
     description?: string | null;
     sizes: string[];
     colors: string[];
-    createdAt?: string | Date; // Add createdAt for sorting
+    createdAt?: string | Date;
 }
 
 export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
-    const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+    const [selectedSections, setSelectedSections] = useState<string[]>([]);
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<'newest' | 'price-low-high' | 'price-high-low'>('newest');
 
-    // Get unique categories and subcategories from the DB data
-    const categories = useMemo(() => {
+    const sections = useMemo(() => {
         return Array.from(new Set(initialProducts.map(p => p.section)));
     }, [initialProducts]);
 
@@ -32,26 +32,21 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         return Array.from(new Set(initialProducts.map(p => p.subcategory)));
     }, [initialProducts]);
 
-    // Filter products
     const filteredProducts = useMemo(() => {
         let result = initialProducts.filter(product => {
-            const categoryMatch = selectedCategories.length === 0 ||
-                selectedCategories.includes(product.section);
+            const sectionMatch = selectedSections.length === 0 ||
+                selectedSections.includes(product.section);
             const subcategoryMatch = selectedSubcategories.length === 0 ||
                 selectedSubcategories.includes(product.subcategory);
-            return categoryMatch && subcategoryMatch;
+            return sectionMatch && subcategoryMatch;
         });
 
-        // Sort results
         result = [...result].sort((a, b) => {
             switch (sortBy) {
-                case 'price-low-high':
-                    return a.price - b.price;
-                case 'price-high-low':
-                    return b.price - a.price;
+                case 'price-low-high': return a.price - b.price;
+                case 'price-high-low': return b.price - a.price;
                 case 'newest':
                 default:
-                    // If createdAt is available, sort by it. Otherwise fallback to ID or keep order
                     const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
                     const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
                     return dateB - dateA;
@@ -59,32 +54,27 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         });
 
         return result;
-    }, [initialProducts, selectedCategories, selectedSubcategories, sortBy]);
+    }, [initialProducts, selectedSections, selectedSubcategories, sortBy]);
 
-    const toggleCategory = (category: string) => {
-        setSelectedCategories(prev =>
-            prev.includes(category)
-                ? prev.filter(c => c !== category)
-                : [...prev, category]
+    const toggleSection = (section: string) => {
+        setSelectedSections(prev =>
+            prev.includes(section) ? prev.filter(s => s !== section) : [...prev, section]
         );
     };
 
     const toggleSubcategory = (subcategory: string) => {
         setSelectedSubcategories(prev =>
-            prev.includes(subcategory)
-                ? prev.filter(s => s !== subcategory)
-                : [...prev, subcategory]
+            prev.includes(subcategory) ? prev.filter(s => s !== subcategory) : [...prev, subcategory]
         );
     };
 
     return (
         <div className={styles.shopPage}>
             <div className={styles.header}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                        <h1>Shop All Products</h1>
-                        <p>Discover our complete collection</p>
-                    </div>
+                <div className="container">
+                    <span className="text-gradient uppercase tracking-widest text-sm font-bold">Catalogue</span>
+                    <h1>All Collections</h1>
+                    <p>Meticulously crafted pieces for your everyday luxury.</p>
                 </div>
             </div>
 
@@ -93,56 +83,50 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                     {/* Sidebar Filters */}
                     <aside className={styles.sidebar}>
                         <div className={styles.filterSection}>
-                            <h3>Category</h3>
-                            {categories.map(category => (
-                                <div key={category} className={styles.filterOption}>
+                            <h3>Collections</h3>
+                            {sections.map(section => (
+                                <label key={section} className={styles.filterOption}>
                                     <input
                                         type="checkbox"
-                                        id={`cat-${category}`}
-                                        checked={selectedCategories.includes(category)}
-                                        onChange={() => toggleCategory(category)}
+                                        checked={selectedSections.includes(section)}
+                                        onChange={() => toggleSection(section)}
                                     />
-                                    <label htmlFor={`cat-${category}`}>
-                                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                                    </label>
-                                </div>
+                                    <span>{section.charAt(0).toUpperCase() + section.slice(1)}</span>
+                                </label>
                             ))}
                         </div>
 
                         <div className={styles.filterSection}>
-                            <h3>Type</h3>
-                            {subcategories.map(subcategory => (
-                                <div key={subcategory} className={styles.filterOption}>
+                            <h3>Category</h3>
+                            {subcategories.map(sub => (
+                                <label key={sub} className={styles.filterOption}>
                                     <input
                                         type="checkbox"
-                                        id={`sub-${subcategory}`}
-                                        checked={selectedSubcategories.includes(subcategory)}
-                                        onChange={() => toggleSubcategory(subcategory)}
+                                        checked={selectedSubcategories.includes(sub)}
+                                        onChange={() => toggleSubcategory(sub)}
                                     />
-                                    <label htmlFor={`sub-${subcategory}`}>
-                                        {subcategory}
-                                    </label>
-                                </div>
+                                    <span>{sub}</span>
+                                </label>
                             ))}
                         </div>
                     </aside>
 
-                    {/* Product Grid */}
-                    <div className={styles.productGrid}>
-                        <div className={styles.gridHeader}>
+                    {/* Main Area */}
+                    <main className={styles.mainArea}>
+                        <div className={styles.topBar}>
                             <span className={styles.productCount}>
-                                {filteredProducts.length} {filteredProducts.length === 1 ? 'product' : 'products'}
+                                Showing <strong>{filteredProducts.length}</strong> Products
                             </span>
 
                             <div className={styles.sortWrapper}>
-                                <label htmlFor="sort">Sort by:</label>
+                                <SlidersHorizontal size={14} className="text-ghost" />
+                                <span className="text-sm font-medium">Sort by:</span>
                                 <select
-                                    id="sort"
+                                    className={styles.sortSelect}
                                     value={sortBy}
                                     onChange={(e) => setSortBy(e.target.value as any)}
-                                    style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd', marginLeft: '8px' }}
                                 >
-                                    <option value="newest">Newest</option>
+                                    <option value="newest">Latest Arrivals</option>
                                     <option value="price-low-high">Price: Low to High</option>
                                     <option value="price-high-low">Price: High to Low</option>
                                 </select>
@@ -150,18 +134,31 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                         </div>
 
                         {filteredProducts.length > 0 ? (
-                            <div className={styles.grid}>
-                                {filteredProducts.map((product: Product) => (
-                                    // @ts-ignore
-                                    <ProductCard key={product.id} {...product} />
+                            <div className={styles.productGrid}>
+                                {filteredProducts.map((product) => (
+                                    <ProductCard
+                                        key={product.id}
+                                        id={product.id}
+                                        title={product.title}
+                                        price={product.price}
+                                        category={product.subcategory}
+                                        image={product.image}
+                                        new={sortBy === 'newest'}
+                                    />
                                 ))}
                             </div>
                         ) : (
                             <div className={styles.noProducts}>
-                                <p>No products found matching your filters.</p>
+                                <p>No products match your current filters.</p>
+                                <button
+                                    onClick={() => { setSelectedSections([]); setSelectedSubcategories([]); }}
+                                    className="text-primary mt-4 font-bold uppercase tracking-widest text-xs"
+                                >
+                                    Clear All Filters
+                                </button>
                             </div>
                         )}
-                    </div>
+                    </main>
                 </div>
             </div>
         </div>

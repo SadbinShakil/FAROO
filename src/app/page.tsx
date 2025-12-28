@@ -2,8 +2,9 @@ import Hero from '@/components/Hero';
 import ProductCard from '@/components/ProductCard';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Truck, RotateCcw, Headset, ArrowUpRight } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
+import styles from './Page.module.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,94 +14,48 @@ export default async function Home() {
     orderBy: { createdAt: 'desc' }
   });
 
-  const featuredProducts = dbProducts.map((p: any) => ({
+  const products = dbProducts.map((p: any) => ({
     ...p,
-    sizes: JSON.parse(p.sizes || '[]'),
-    colors: JSON.parse(p.colors || '[]')
+    new: true // Marking recently added as new
   }));
 
   return (
     <main>
       <Hero />
 
-      {/* Category Showcase */}
-      <section style={{ padding: '100px 0', background: 'var(--secondary-color)' }}>
+      {/* Collections Showcase */}
+      <section className={styles.section}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: '700', color: 'var(--primary-color)' }}>Shop by Category</h2>
-            <p style={{ color: 'var(--text-light)', fontSize: '1.1rem' }}>Explore our curated collections</p>
+          <div className={styles.sectionTitle}>
+            <span className="text-gradient font-bold uppercase tracking-widest text-sm">Curated Styles</span>
+            <h2>Seasonal Collections</h2>
+            <p>Explore our latest drops designed for elegance and comfort.</p>
           </div>
 
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-            gap: '30px'
-          }}>
-            {/* Women's Category */}
-            <Link href="/shop?section=women" style={{
-              position: 'relative',
-              height: '400px',
-              borderRadius: '2px',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-md)',
-              transition: 'all 0.4s ease',
-              display: 'block'
-            }}>
+          <div className={styles.categoryGrid}>
+            <Link href="/shop?section=women" className={styles.categoryCard}>
               <Image
-                src="/products/women-tunic-1.jpg"
+                src="/collections/women.png"
                 alt="Women's Collection"
                 fill
-                style={{ objectFit: 'cover', transition: 'transform 0.6s ease' }}
               />
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(to top, rgba(93, 0, 30, 0.8), transparent)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                padding: '40px',
-                color: 'white',
-              }}>
-                <h3 style={{ fontSize: '2rem', marginBottom: '8px', fontWeight: '400', fontFamily: 'serif' }}>Women's Collection</h3>
-                <p style={{ opacity: 0.9, marginBottom: '20px', fontWeight: '300' }}>Elegant tunics, sweaters & more</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                  Shop Now <ArrowRight size={16} />
-                </div>
+              <div className={styles.categoryOverlay}>
+                <h3>The Women's Edit</h3>
+                <p>Timeless silhouettes refined for the modern woman.</p>
+                <span className={styles.categoryLink}>Discover Now</span>
               </div>
             </Link>
 
-            {/* Men's Category */}
-            <Link href="/shop?section=men" style={{
-              position: 'relative',
-              height: '400px',
-              borderRadius: '2px',
-              overflow: 'hidden',
-              boxShadow: 'var(--shadow-md)',
-              transition: 'all 0.4s ease',
-              display: 'block'
-            }}>
+            <Link href="/shop?section=men" className={styles.categoryCard}>
               <Image
-                src="/products/men-shirt-placeholder.png"
+                src="/collections/men.png"
                 alt="Men's Collection"
                 fill
-                style={{ objectFit: 'cover', transition: 'transform 0.6s ease' }}
               />
-              <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'linear-gradient(to top, rgba(93, 0, 30, 0.8), transparent)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'flex-end',
-                padding: '40px',
-                color: 'white',
-              }}>
-                <h3 style={{ fontSize: '2rem', marginBottom: '8px', fontWeight: '400', fontFamily: 'serif' }}>Men's Collection</h3>
-                <p style={{ opacity: 0.9, marginBottom: '20px', fontWeight: '300' }}>Shirts, pants & jackets</p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '0.9rem', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                  Shop Now <ArrowRight size={16} />
-                </div>
+              <div className={styles.categoryOverlay}>
+                <h3>The Men's Series</h3>
+                <p>Contemporary classics built on quality and character.</p>
+                <span className={styles.categoryLink}>Discover Now</span>
               </div>
             </Link>
           </div>
@@ -108,11 +63,11 @@ export default async function Home() {
       </section>
 
       {/* Featured Products */}
-      <section style={{ padding: '100px 0' }}>
+      <section className={styles.section} style={{ background: 'var(--bg-alt)' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: '700', color: 'var(--primary-color)' }}>Featured Products</h2>
-            <p style={{ color: 'var(--text-light)', fontSize: '1.1rem' }}>Handpicked favorites from our collection</p>
+          <div className={styles.sectionTitle}>
+            <h2>New Arrivals</h2>
+            <p>Fresh picks from our design studio, available now.</p>
           </div>
 
           <div style={{
@@ -121,81 +76,57 @@ export default async function Home() {
             gap: '40px',
             marginBottom: '60px'
           }}>
-            {featuredProducts.map((product: any) => (
-              // @ts-ignore
+            {products.map((product: any) => (
               <ProductCard key={product.id} {...product} />
             ))}
           </div>
 
           <div style={{ textAlign: 'center' }}>
-            <Link href="/shop" className="btn">
-              View All Products
+            <Link href="/shop" className="btn-luxe">
+              View All Products <ArrowUpRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section style={{
-        padding: '100px 0',
-        background: 'linear-gradient(135deg, var(--primary-color) 0%, #2b000e 100%)',
-        color: 'white'
-      }}>
+      {/* Brand Promise / Features */}
+      <section className={styles.section}>
         <div className="container">
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            gap: '40px',
-            textAlign: 'center'
-          }}>
-            <div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '8px', fontFamily: 'serif' }}>24+</div>
-              <div style={{ fontSize: '1rem', opacity: 0.9, letterSpacing: '1px', textTransform: 'uppercase' }}>Products</div>
+          <div className={styles.featuresGrid}>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}><Truck size={28} /></div>
+              <h3>Fast Delivery</h3>
+              <p>Premium tracked shipping across Bangladesh and worldwide.</p>
             </div>
-            <div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '8px', fontFamily: 'serif' }}>100%</div>
-              <div style={{ fontSize: '1rem', opacity: 0.9, letterSpacing: '1px', textTransform: 'uppercase' }}>Quality Guaranteed</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}><ShieldCheck size={28} /></div>
+              <h3>Secure Payment</h3>
+              <p>Your transactions are protected with industry-leading security.</p>
             </div>
-            <div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '8px', fontFamily: 'serif' }}>24/7</div>
-              <div style={{ fontSize: '1rem', opacity: 0.9, letterSpacing: '1px', textTransform: 'uppercase' }}>Customer Support</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}><RotateCcw size={28} /></div>
+              <h3>Easy Returns</h3>
+              <p>Not the perfect fit? Enjoy a hassle-free 7-day return policy.</p>
             </div>
-            <div>
-              <div style={{ fontSize: '3.5rem', fontWeight: '700', marginBottom: '8px', fontFamily: 'serif' }}>Free</div>
-              <div style={{ fontSize: '1rem', opacity: 0.9, letterSpacing: '1px', textTransform: 'uppercase' }}>Shipping Worldwide</div>
+            <div className={styles.featureCard}>
+              <div className={styles.featureIcon}><Headset size={28} /></div>
+              <h3>Expert Support</h3>
+              <p>Our concierge team is here to assist you with every detail.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section style={{ padding: '100px 0', background: '#fafafa' }}>
-        <div className="container" style={{ maxWidth: '700px', textAlign: 'center' }}>
-          <h2 style={{ fontSize: '2.5rem', marginBottom: '16px', fontWeight: '700' }}>Stay Updated</h2>
-          <p style={{ marginBottom: '40px', color: '#666', fontSize: '1.1rem' }}>
-            Subscribe to our newsletter for exclusive offers and early access to new collections.
-          </p>
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            maxWidth: '500px',
-            margin: '0 auto',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
-            borderRadius: '4px',
-            overflow: 'hidden'
-          }}>
-            <input
-              type="email"
-              placeholder="Enter your email address"
-              style={{
-                flex: 1,
-                padding: '16px 20px',
-                border: 'none',
-                fontSize: '1rem',
-                outline: 'none'
-              }}
-            />
-            <button className="btn" style={{ borderRadius: 0, margin: 0 }}>Subscribe</button>
+      {/* Newsletter Overlay Section */}
+      <section className={styles.section} style={{ paddingTop: 0 }}>
+        <div className={styles.newsletter}>
+          <div className={styles.newsletterContent}>
+            <h2 className="font-heading text-4xl mb-4">Join the Insiders</h2>
+            <p>Receive exclusive invitations to collection launches and private events.</p>
+            <form className={styles.newsletterInput}>
+              <input type="email" placeholder="Your Email Address" required />
+              <button className="btn-luxe">Subscribe</button>
+            </form>
           </div>
         </div>
       </section>

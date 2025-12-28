@@ -16,7 +16,8 @@ import {
     ChevronDown,
     Minus,
     Plus,
-    ShoppingBag
+    ShoppingBag,
+    CheckCircle2
 } from 'lucide-react';
 
 interface Product {
@@ -37,36 +38,27 @@ interface ProductDetailsClientProps {
     relatedProducts: Product[];
 }
 
-import SizeGuideModal from '@/components/SizeGuideModal';
-
 export default function ProductDetailsClient({ product, relatedProducts }: ProductDetailsClientProps) {
     const [selectedSize, setSelectedSize] = useState<string>('');
     const [selectedColor, setSelectedColor] = useState<string>('');
     const [quantity, setQuantity] = useState(1);
     const [isAdding, setIsAdding] = useState(false);
+    const [isAdded, setIsAdded] = useState(false);
     const [openAccordion, setOpenAccordion] = useState<string | null>('details');
-    const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
-    // Fallback for missing data
-    const sizes = product.sizes?.length ? product.sizes : [];
-    const colors = product.colors?.length ? product.colors : [];
+    const sizes = product.sizes?.length ? product.sizes : ['S', 'M', 'L', 'XL'];
+    const colors = product.colors?.length ? product.colors : ['White', 'Black'];
 
-    const { addToCart } = useCart();
+    const { addToCart, openCart } = useCart();
 
     const handleAddToCart = () => {
-        if (sizes.length > 0 && !selectedSize) {
+        if (!selectedSize) {
             alert('Please select a size');
-            return;
-        }
-
-        if (colors.length > 0 && !selectedColor) {
-            alert('Please select a color');
             return;
         }
 
         setIsAdding(true);
 
-        // Simulate loading for premium feel
         setTimeout(() => {
             addToCart({
                 productId: product.id,
@@ -75,34 +67,27 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                 image: product.image,
                 quantity: quantity,
                 size: selectedSize,
-                color: selectedColor
             });
             setIsAdding(false);
-            alert('Added to cart!');
-        }, 600);
-    };
-
-    const toggleAccordion = (section: string) => {
-        setOpenAccordion(openAccordion === section ? null : section);
+            setIsAdded(true);
+            setTimeout(() => {
+                setIsAdded(false);
+                openCart();
+            }, 1500);
+        }, 800);
     };
 
     return (
         <div className={styles.productPage}>
-            <SizeGuideModal
-                isOpen={isSizeGuideOpen}
-                onClose={() => setIsSizeGuideOpen(false)}
-                category={product.subcategory}
-            />
             <div className={styles.container}>
-                {/* Breadcrumb */}
-                <div className={styles.breadcrumb}>
+                <nav className={styles.breadcrumb}>
                     <Link href="/">Home</Link> <span>/</span>
                     <Link href="/shop">Shop</Link> <span>/</span>
-                    <span style={{ color: 'var(--text-color)', fontWeight: 500 }}>{product.title}</span>
-                </div>
+                    <span className="text-main font-semibold">{product.title}</span>
+                </nav>
 
                 <div className={styles.productGrid}>
-                    {/* Left Column: Images */}
+                    {/* Left Column: Image Stack */}
                     <div className={styles.imageSection}>
                         <div className={styles.mainImage}>
                             <Image
@@ -113,111 +98,71 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                                 sizes="(max-width: 768px) 100vw, 50vw"
                             />
                         </div>
-                        {/* Mock Gallery for visuals */}
                         <div className={styles.imageGallery}>
-                            <div className={`${styles.galleryThumb} ${styles.active}`}>
-                                <Image src={product.image} alt="View 1" width={80} height={100} style={{ objectFit: 'cover' }} />
-                            </div>
-                            {/* We duplicate the image to simulate a gallery since we only have one */}
-                            <div className={styles.galleryThumb}>
-                                <Image src={product.image} alt="View 2" width={80} height={100} style={{ objectFit: 'cover' }} />
-                            </div>
-                            <div className={styles.galleryThumb}>
-                                <Image src={product.image} alt="View 3" width={80} height={100} style={{ objectFit: 'cover' }} />
-                            </div>
+                            {[1, 2, 3].map((i) => (
+                                <div key={i} className={`${styles.galleryThumb} ${i === 1 ? styles.active : ''}`}>
+                                    <Image src={product.image} alt="Thumbnail" fill style={{ objectFit: 'cover' }} />
+                                </div>
+                            ))}
                         </div>
                     </div>
 
-                    {/* Right Column: Details */}
+                    {/* Right Column: Info */}
                     <div className={styles.detailsSection}>
                         <div className={styles.badges}>
-                            <span className={styles.badge}>New Season</span>
-                            <span className={styles.badge} style={{ background: '#F0F9FF', color: '#0066CC' }}>Best Seller</span>
+                            <span className={styles.badge} style={{ background: 'var(--primary-bg)', color: 'var(--primary)' }}>
+                                New Arrival
+                            </span>
+                            <span className={styles.badge} style={{ background: '#fef3c7', color: '#92400e' }}>
+                                Limited Edition
+                            </span>
                         </div>
 
                         <h1 className={styles.productTitle}>{product.title}</h1>
 
                         <div className={styles.rating}>
-                            <div style={{ display: 'flex' }}>
-                                {[1, 2, 3, 4, 5].map((star) => (
-                                    <Star key={star} size={16} fill="#FFB800" strokeWidth={0} />
-                                ))}
+                            <div className="flex text-accent">
+                                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="currentColor" />)}
                             </div>
-                            <span>(12 Reviews)</span>
+                            <span>(4.9/5 from 42 Reviews)</span>
                         </div>
 
                         <div className={styles.priceContainer}>
                             <span className={styles.productPrice}>৳{product.price.toLocaleString()}</span>
-                            {/* Mock original price for discount effect */}
-                            <span className={styles.originalPrice}>৳{(product.price * 1.2).toFixed(0)}</span>
+                            <span className={styles.originalPrice}>৳{(product.price * 1.15).toLocaleString()}</span>
                         </div>
 
                         <p className={styles.productDescription}>
-                            {product.description || "Experience premium quality with this meticulously crafted piece. Designed for both comfort and style, making it a perfect addition to your wardrobe."}
+                            {product.description || "Crafted from specialized fabrics, this piece combines luxury with everyday functionality. Designed for longevity and timeless style."}
                         </p>
 
-                        <div className={styles.selectors}>
-                            {/* Color Selector */}
-                            {colors.length > 0 && (
-                                <div>
-                                    <div className={styles.selectorLabel}>
-                                        <span>Color: {selectedColor || 'Select a color'}</span>
-                                    </div>
-                                    <div className={styles.optionsGrid}>
-                                        {colors.map((color) => (
-                                            <button
-                                                key={color}
-                                                className={`${styles.colorOption} ${selectedColor === color ? styles.selected : ''}`}
-                                                style={{ backgroundColor: color.toLowerCase() }}
-                                                onClick={() => setSelectedColor(color)}
-                                                title={color}
-                                                aria-label={color}
-                                            />
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Size Selector */}
-                            {sizes.length > 0 && (
-                                <div>
-                                    <div className={styles.selectorLabel}>
-                                        <span>Size: {selectedSize || 'Select a size'}</span>
-                                        <button
-                                            className={styles.sizeGuideBtn}
-                                            onClick={() => setIsSizeGuideOpen(true)}
-                                        >
-                                            Size Guide
-                                        </button>
-                                    </div>
-                                    <div className={styles.optionsGrid}>
-                                        {sizes.map((size) => (
-                                            <button
-                                                key={size}
-                                                className={`${styles.sizeOption} ${selectedSize === size ? styles.selected : ''}`}
-                                                onClick={() => setSelectedSize(size)}
-                                            >
-                                                {size}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
+                        {/* Size Selection */}
+                        <div className="mb-8">
+                            <div className={styles.selectorLabel}>
+                                <span>Select Size: <span className="text-primary">{selectedSize}</span></span>
+                                <button className="text-[10px] underline tracking-widest">SIzeguide</button>
+                            </div>
+                            <div className={styles.optionsGrid}>
+                                {sizes.map(size => (
+                                    <button
+                                        key={size}
+                                        className={`${styles.sizeOption} ${selectedSize === size ? styles.selected : ''}`}
+                                        onClick={() => setSelectedSize(size)}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
+                        {/* Purchase Actions */}
                         <div className={styles.actions}>
                             <div className={styles.quantityControl}>
-                                <button
-                                    className={styles.quantityBtn}
-                                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                >
+                                <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className={styles.quantityBtn}>
                                     <Minus size={16} />
                                 </button>
                                 <span className={styles.quantityValue}>{quantity}</span>
-                                <button
-                                    className={styles.quantityBtn}
-                                    onClick={() => setQuantity(quantity + 1)}
-                                >
+                                <button onClick={() => setQuantity(quantity + 1)} className={styles.quantityBtn}>
                                     <Plus size={16} />
                                 </button>
                             </div>
@@ -225,87 +170,53 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                             <button
                                 className={styles.addToCartBtn}
                                 onClick={handleAddToCart}
-                                disabled={isAdding}
+                                disabled={isAdding || isAdded}
                             >
                                 {isAdding ? (
-                                    <>Adding...</>
+                                    <span>Processing...</span>
+                                ) : isAdded ? (
+                                    <span className="flex items-center gap-2"><CheckCircle2 size={20} /> Added</span>
                                 ) : (
-                                    <>
-                                        <ShoppingBag size={20} />
-                                        Add to Cart
-                                    </>
+                                    <span className="flex items-center gap-2"><ShoppingBag size={20} /> Add to Cart</span>
                                 )}
                             </button>
 
-                            <button className={styles.wishlistBtn} aria-label="Add to Wishlist">
+                            <button className={styles.wishlistBtn}>
                                 <Heart size={20} />
                             </button>
                         </div>
 
+                        {/* Feature Points */}
                         <div className={styles.featuresList}>
-                            <div className={styles.featureItem}>
-                                <Truck size={20} className={styles.featureIcon} />
-                                <span>Free Shipping</span>
-                            </div>
-                            <div className={styles.featureItem}>
-                                <ShieldCheck size={20} className={styles.featureIcon} />
-                                <span>Secure Checkout</span>
-                            </div>
-                            <div className={styles.featureItem}>
-                                <RotateCcw size={20} className={styles.featureIcon} />
-                                <span>Easy Returns</span>
-                            </div>
-                            <div className={styles.featureItem}>
-                                <Share2 size={20} className={styles.featureIcon} />
-                                <span>Share Product</span>
-                            </div>
+                            <div className={styles.featureItem}><Truck size={18} className={styles.featureIcon} /> <span>Express Delivery</span></div>
+                            <div className={styles.featureItem}><ShieldCheck size={18} className={styles.featureIcon} /> <span>Verified Quality</span></div>
+                            <div className={styles.featureItem}><RotateCcw size={18} className={styles.featureIcon} /> <span>30-Day Returns</span></div>
+                            <div className={styles.featureItem}><Share2 size={18} className={styles.featureIcon} /> <span>Secure Share</span></div>
                         </div>
 
-                        {/* Accordion Information */}
-                        <div className={styles.infoSection}>
+                        {/* Info Accordions */}
+                        <div className="border-t border-light mt-8">
                             <div className={styles.accordionItem}>
-                                <button
-                                    className={styles.accordionHeader}
-                                    onClick={() => toggleAccordion('details')}
-                                >
-                                    Product Details
-                                    <ChevronDown
-                                        size={20}
-                                        style={{
-                                            transform: openAccordion === 'details' ? 'rotate(180deg)' : 'rotate(0)',
-                                            transition: 'transform 0.3s'
-                                        }}
-                                    />
+                                <button className={styles.accordionHeader} onClick={() => setOpenAccordion(openAccordion === 'details' ? null : 'details')}>
+                                    Product Specifications
+                                    <ChevronDown size={16} style={{ transform: openAccordion === 'details' ? 'rotate(180deg)' : 'none', transition: '0.3s' }} />
                                 </button>
                                 <div className={`${styles.accordionContent} ${openAccordion === 'details' ? styles.open : ''}`}>
                                     <div className={styles.contentInner}>
-                                        <ul>
-                                            <li>Category: {product.category}</li>
-                                            <li>Subcategory: {product.subcategory}</li>
-                                            <li>Material: 100% Premium Cotton (Mock)</li>
-                                            <li>Fit: Regular Fit</li>
-                                        </ul>
+                                        <p>Material: Premium Cotton Blend</p>
+                                        <p>Weight: 240 GSM Luxury Weight</p>
+                                        <p>Care: Hand wash or dry clean recommended</p>
                                     </div>
                                 </div>
                             </div>
-
                             <div className={styles.accordionItem}>
-                                <button
-                                    className={styles.accordionHeader}
-                                    onClick={() => toggleAccordion('shipping')}
-                                >
+                                <button className={styles.accordionHeader} onClick={() => setOpenAccordion(openAccordion === 'shipping' ? null : 'shipping')}>
                                     Shipping & Returns
-                                    <ChevronDown
-                                        size={20}
-                                        style={{
-                                            transform: openAccordion === 'shipping' ? 'rotate(180deg)' : 'rotate(0)',
-                                            transition: 'transform 0.3s'
-                                        }}
-                                    />
+                                    <ChevronDown size={16} style={{ transform: openAccordion === 'shipping' ? 'rotate(180deg)' : 'none', transition: '0.3s' }} />
                                 </button>
                                 <div className={`${styles.accordionContent} ${openAccordion === 'shipping' ? styles.open : ''}`}>
                                     <div className={styles.contentInner}>
-                                        <p>Free standard shipping on all orders over ৳2000. Returns are accepted within 30 days of purchase. Please ensure tags are attached.</p>
+                                        <p>Dispatched within 24-48 hours. Returns accepted on unworn items with tags within 7 days.</p>
                                     </div>
                                 </div>
                             </div>
@@ -313,19 +224,16 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                     </div>
                 </div>
 
-                {/* Related Products */}
+                {/* Related Section */}
                 {relatedProducts.length > 0 && (
                     <div className={styles.relatedSection}>
                         <div className={styles.sectionHeader}>
-                            <h2 className={styles.sectionTitle}>You May Also Like</h2>
-                            <Link href="/shop" className={styles.viewAllLink}>
-                                View All
-                            </Link>
+                            <h2>You May Also Like</h2>
+                            <Link href="/shop" className={styles.viewAllLink}>Explore Shop</Link>
                         </div>
-                        <div className={styles.relatedGrid}>
-                            {relatedProducts.map((relatedProduct: Product) => (
-                                // @ts-ignore
-                                <ProductCard key={relatedProduct.id} {...relatedProduct} />
+                        <div className={styles.productGrid} style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+                            {relatedProducts.slice(0, 4).map(p => (
+                                <ProductCard key={p.id} {...p} />
                             ))}
                         </div>
                     </div>
