@@ -1,0 +1,144 @@
+.container {
+    padding-top: 80px;
+    background-color: #fff;
+    color: #1a1a1a;
+}
+
+.hero {
+    position: relative;
+    height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+    padding: 20px;
+}
+
+.heroContent h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 20px;
+}
+
+.heroOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+.section {
+    padding: 100px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.storyGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.imageBox {
+    position: relative;
+    height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.textBlock h2 {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.textBlock h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--primary-color);
+}
+
+.textBlock p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.values {
+    background: #f9f9f9;
+    padding: 100px 20px;
+    text-align: center;
+}
+
+.valueGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    max-width: 1200px;
+    margin: 60px auto 0;
+}
+
+.valueCard {
+    padding: 40px;
+    background: white;
+    border-radius: 12px;
+    transition: transform 0.3s ease;
+}
+
+.valueCard:hover {
+    transform: translateY(-10px);
+}
+
+.valueCard h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.quote {
+    font-size: 2rem;
+    font-style: italic;
+    text-align: center;
+    max-width: 800px;
+    margin: 100px auto;
+    color: #333;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .storyGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .heroContent h1 {
+        font-size: 2.5rem;
+    }
+
+    .imageBox {
+        height: 400px;
+    }
+
+    .valueGrid {
+        grid-template-columns: 1fr;
+    }
+}
