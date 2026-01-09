@@ -23,6 +23,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     const [selectedSections, setSelectedSections] = useState<string[]>([]);
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<'newest' | 'price-low-high' | 'price-high-low'>('newest');
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const sections = useMemo(() => {
         return Array.from(new Set(initialProducts.map(p => p.section)));
@@ -80,8 +81,25 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
 
             <div className={styles.container}>
                 <div className={styles.content}>
+                    {/* Mobile Filter Toggle */}
+                    <button
+                        className={styles.mobileFilterBtn}
+                        onClick={() => setIsFilterOpen(true)}
+                    >
+                        <Filter size={20} />
+                        Filters
+                    </button>
+
                     {/* Sidebar Filters */}
-                    <aside className={styles.sidebar}>
+                    <div
+                        className={`${styles.overlay} ${isFilterOpen ? styles.overlayVisible : ''}`}
+                        onClick={() => setIsFilterOpen(false)}
+                    />
+                    <aside className={`${styles.sidebar} ${isFilterOpen ? styles.sidebarOpen : ''}`}>
+                        <div className={styles.sidebarHeader}>
+                            <h3>Filters</h3>
+                            <button onClick={() => setIsFilterOpen(false)}>×</button>
+                        </div>
                         <div className={styles.filterSection}>
                             <h3>Collections</h3>
                             {sections.map(section => (
@@ -109,6 +127,13 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                                 </label>
                             ))}
                         </div>
+
+                        <button
+                            className={styles.applyBtn}
+                            onClick={() => setIsFilterOpen(false)}
+                        >
+                            Apply Filters
+                        </button>
                     </aside>
 
                     {/* Main Area */}

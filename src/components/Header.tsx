@@ -2,8 +2,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { ShoppingBag, Search, User, Menu, X } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { ShoppingBag, Search, User, Menu, X, LayoutDashboard, Package, ShoppingCart, Tag, LogOut, ChevronRight } from 'lucide-react';
 import styles from './Header.module.css';
 import { useCart } from '@/context/CartContext';
 
@@ -13,9 +13,14 @@ export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
+    const pathname = usePathname();
+
+    const isAdmin = pathname.startsWith('/admin');
 
     useEffect(() => {
+        setIsMounted(true);
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
         };
@@ -61,16 +66,46 @@ export default function Header() {
 
                     {/* Desktop Navigation */}
                     <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
-                        <Link href="/" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
-                        <Link href="/shop" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
-                        <Link href="/collections" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>
-                        <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
-                        <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
+                        {isAdmin ? (
+                            <>
+                                <Link href="/admin/dashboard" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                                    <LayoutDashboard size={18} className={styles.mobileOnly} /> Dashboard
+                                </Link>
+                                <Link href="/admin/products" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                                    <Package size={18} className={styles.mobileOnly} /> Products
+                                </Link>
+                                <Link href="/admin/orders" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                                    <ShoppingCart size={18} className={styles.mobileOnly} /> Orders
+                                </Link>
+                                <Link href="/admin/discounts" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                                    <Tag size={18} className={styles.mobileOnly} /> Discounts
+                                </Link>
+                                <button
+                                    onClick={() => {
+                                        sessionStorage.removeItem('adminAuth');
+                                        router.push('/admin');
+                                        setIsMenuOpen(false);
+                                    }}
+                                    className={`${styles.navLink} ${styles.logoutLink}`}
+                                    style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
+                                >
+                                    <LogOut size={18} className={styles.mobileOnly} /> Logout
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link href="/" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
+                                <Link href="/shop" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
+                                <Link href="/collections" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>
+                                <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
+                                <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
+                            </>
+                        )}
                     </nav>
 
                     {/* Actions */}
                     <div className={styles.actions}>
-                        {!isMenuOpen && (
+                        {!isMenuOpen && !isAdmin && (
                             <>
                                 {isSearchOpen ? (
                                     <form onSubmit={handleSearch} className={styles.searchForm}>
@@ -104,7 +139,7 @@ export default function Header() {
 
                         <button onClick={openCart} className={styles.iconBtn} aria-label="Cart">
                             <ShoppingBag size={21} strokeWidth={1.5} />
-                            {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
+                            {isMounted && cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
                         </button>
                     </div>
                 </div>

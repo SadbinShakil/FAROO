@@ -35,6 +35,35 @@
 .sidebar {
     width: 260px;
     flex-shrink: 0;
+    transition: var(--transition);
+}
+
+.mobileFilterBtn {
+    display: none;
+}
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1002;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.overlayVisible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebarHeader {
+    display: none;
+}
+
+.applyBtn {
+    display: none;
 }
 
 .filterSection {
@@ -129,10 +158,73 @@
     }
 
     .sidebar {
-        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 320px;
+        background: white;
+        z-index: 1003;
+        padding: 32px;
         display: flex;
-        flex-wrap: wrap;
-        gap: 40px;
+        flex-direction: column;
+        transform: translateX(-100%);
+        box-shadow: 20px 0 50px rgba(0, 0, 0, 0.1);
+        transition: var(--transition);
+        /* Added transition for sidebar */
+    }
+
+    .sidebarOpen {
+        transform: translateX(0);
+    }
+
+    .sidebarHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-light);
+    }
+
+    .sidebarHeader h3 {
+        margin-bottom: 0;
+        font-size: 1rem;
+    }
+
+    .sidebarHeader button {
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--text-ghost);
+    }
+
+    .mobileFilterBtn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: var(--bg-alt);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 32px;
+        width: fit-content;
+    }
+
+    .applyBtn {
+        display: block;
+        margin-top: auto;
+        padding: 16px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
     }
 
     .filterSection {
@@ -147,11 +239,6 @@
 
     .header h1 {
         font-size: 2rem;
-    }
-
-    .sidebar {
-        flex-direction: column;
-        gap: 24px;
     }
 
     .productGrid {

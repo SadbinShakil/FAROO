@@ -330,25 +330,13 @@
     }
 
     .sidebar {
+        display: none !important;
+    }
+
+    .main {
+        margin-left: 0 !important;
+        padding: 1.5rem 1rem !important;
         width: 100% !important;
-        height: auto !important;
-        position: relative !important;
-        padding: 1rem 0;
-    }
-
-    .logo {
-        padding: 0 1rem 1rem;
-        text-align: center;
-    }
-
-    .nav {
-        padding: 0.5rem 0;
-        flex-direction: row;
-        overflow-x: auto;
-        gap: 0.25rem;
-        display: flex;
-        -webkit-overflow-scrolling: touch;
-        /* Smooth scrolling for iOS */
     }
 
     .navItem,

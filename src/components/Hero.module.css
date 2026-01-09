@@ -172,4 +172,8 @@
         margin-left: auto;
         margin-right: auto;
     }
+
+    .scrollIndicator {
+        display: none;
+    }
 }
