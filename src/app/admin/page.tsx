@@ -10,16 +10,28 @@ export default function AdminLogin() {
     const [error, setError] = useState('');
     const router = useRouter();
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
 
-        // Simple demo authentication
-        if (username === 'admin' && password === 'admin123') {
-            // Store in sessionStorage (in production, use proper auth)
-            sessionStorage.setItem('adminAuth', 'true');
-            router.push('/admin/dashboard');
-        } else {
-            setError('Invalid credentials. Try admin/admin123');
+        try {
+            const res = await fetch('/api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                // Compatibility for older components that might still check session storage
+                sessionStorage.setItem('adminAuth', 'true');
+                router.push('/admin/dashboard');
+            } else {
+                setError(data.error || 'Invalid credentials');
+            }
+        } catch (err) {
+            setError('Login failed. Please try again.');
         }
     };
 

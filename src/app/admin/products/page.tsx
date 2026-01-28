@@ -9,6 +9,7 @@ import productsStyles from './Products.module.css';
 
 interface Product {
     id: string;
+    sku: string;
     title: string;
     price: number;
     category: string;
@@ -18,6 +19,7 @@ interface Product {
     description: string;
     sizes: string[];
     colors: string[];
+    stock: number;
 }
 
 export default function AdminProducts() {
@@ -34,6 +36,7 @@ export default function AdminProducts() {
     const [uploading, setUploading] = useState(false);
 
     const initialFormState = {
+        sku: '',
         title: '',
         price: '',
         category: 'Clothing',
@@ -41,8 +44,9 @@ export default function AdminProducts() {
         subcategory: 'T-Shirts',
         description: '',
         image: '',
-        sizes: '',  // Comma separated string for input
-        colors: ''  // Comma separated string for input
+        sizes: '',
+        colors: '',
+        stock: '0'
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -71,7 +75,8 @@ export default function AdminProducts() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await fetch('/api/admin/logout', { method: 'POST' });
         sessionStorage.removeItem('adminAuth');
         router.push('/admin');
     };
@@ -115,6 +120,7 @@ export default function AdminProducts() {
     const openEditModal = (product: Product) => {
         setEditingId(product.id);
         setFormData({
+            sku: product.sku || '',
             title: product.title,
             price: product.price.toString(),
             category: product.category,
@@ -122,8 +128,9 @@ export default function AdminProducts() {
             subcategory: product.subcategory,
             description: product.description || '',
             image: product.image,
-            sizes: product.sizes.join(', '),
-            colors: product.colors.join(', ')
+            sizes: (product.sizes || []).join(', '),
+            colors: (product.colors || []).join(', '),
+            stock: (product.stock || 0).toString()
         });
         setShowModal(true);
     };
@@ -145,6 +152,7 @@ export default function AdminProducts() {
         const payload = {
             ...formData,
             price: parseFloat(formData.price),
+            stock: parseInt(formData.stock),
             sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
             colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean)
         };
@@ -253,7 +261,19 @@ export default function AdminProducts() {
                                     </div>
                                 </div>
                                 <div className={productsStyles.productInfo}>
-                                    <span className={productsStyles.productId}>#{product.id}</span>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span className={productsStyles.productId}>#{product.sku || product.id.slice(0, 8)}</span>
+                                        <span style={{
+                                            fontSize: '0.75rem',
+                                            fontWeight: 600,
+                                            color: product.stock > 0 ? '#10b981' : '#ef4444',
+                                            background: product.stock > 0 ? '#f0fdf4' : '#fef2f2',
+                                            padding: '2px 8px',
+                                            borderRadius: '10px'
+                                        }}>
+                                            {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
+                                        </span>
+                                    </div>
                                     <h3>{product.title}</h3>
                                     <p className={productsStyles.productCategory}>{product.subcategory}</p>
                                     <div className={productsStyles.productFooter}>
@@ -275,7 +295,11 @@ export default function AdminProducts() {
                             </div>
 
                             <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '16px' }}>
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr 1fr', gap: '16px' }}>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>SKU</label>
+                                        <input placeholder="e.g. FR-001" className={productsStyles.input} type="text" value={formData.sku} onChange={e => setFormData({ ...formData, sku: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                    </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Title</label>
                                         <input required className={productsStyles.input} type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
@@ -286,7 +310,7 @@ export default function AdminProducts() {
                                     </div>
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Section</label>
                                         <select value={formData.section} onChange={e => setFormData({ ...formData, section: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
@@ -297,6 +321,10 @@ export default function AdminProducts() {
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Category</label>
                                         <input required type="text" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                    </div>
+                                    <div>
+                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Stock Count</label>
+                                        <input required type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
                                     </div>
                                 </div>
 

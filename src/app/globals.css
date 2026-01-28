@@ -37,6 +37,13 @@
   --header-height: 80px;
   --transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
   --transition-slow: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+
+  /* Aliases for compatibility */
+  --primary-color: var(--primary);
+  --text-dark: var(--text-main);
+  --text-color: var(--text-main);
+  --text-light: var(--text-ghost);
+  --border-color: var(--border);
 }
 
 * {
@@ -155,6 +162,25 @@ button {
   background: var(--primary);
   color: white;
   transform: translateY(-4px);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: white;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
 }
 
 /* Dynamic Gradients */

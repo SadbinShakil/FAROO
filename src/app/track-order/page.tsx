@@ -192,22 +192,45 @@ export default function TrackOrderPage() {
                             ))}
                         </div>
 
-                        <div style={{
-                            padding: '20px',
-                            background: '#F0F9FF',
-                            borderRadius: '8px',
-                            display: 'flex',
-                            gap: '12px',
-                            alignItems: 'center',
-                            color: '#0066CC'
-                        }}>
-                            <Truck size={24} />
-                            <div>
-                                <strong>Shipping Address</strong>
-                                <p style={{ margin: '4px 0 0', color: '#334155', fontSize: '0.95rem' }}>
-                                    {order.shippingStreet}, {order.shippingCity}, {order.shippingState}, {order.shippingPincode}
-                                </p>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
+                            <div style={{
+                                padding: '20px',
+                                background: '#F0F9FF',
+                                borderRadius: '8px',
+                                display: 'flex',
+                                gap: '12px',
+                                alignItems: 'center',
+                                color: '#0066CC'
+                            }}>
+                                <Truck size={24} />
+                                <div>
+                                    <strong>Shipping Address</strong>
+                                    <p style={{ margin: '4px 0 0', color: '#334155', fontSize: '0.95rem' }}>
+                                        {order.shippingStreet}, {order.shippingCity}, {order.shippingState}, {order.shippingPincode}
+                                    </p>
+                                </div>
                             </div>
+
+                            {order.trackingNumber && (
+                                <div style={{
+                                    padding: '20px',
+                                    background: '#F0FDF4',
+                                    borderRadius: '8px',
+                                    display: 'flex',
+                                    gap: '12px',
+                                    alignItems: 'center',
+                                    color: '#166534'
+                                }}>
+                                    <Package size={24} />
+                                    <div>
+                                        <strong>Fulfillment Details</strong>
+                                        <p style={{ margin: '4px 0 0', color: '#334155', fontSize: '0.95rem' }}>
+                                            Courier: {order.courierName || 'In Progress'}<br />
+                                            Tracking ID: {order.trackingNumber}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

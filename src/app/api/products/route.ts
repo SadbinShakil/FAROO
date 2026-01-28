@@ -49,16 +49,18 @@ export async function POST(request: Request) {
 
         const product = await prisma.product.create({
             data: {
+                sku: body.sku,
                 title: body.title,
                 price: parseFloat(body.price),
                 category: body.category || 'General',
-                section: body.section || 'women', // Default to women if not specified
+                section: body.section || 'women',
                 subcategory: body.subcategory || 'General',
-                image: body.image || '/products/women-tunic-1.jpg', // Default placeholder
+                image: body.image || '/products/women-tunic-1.jpg',
                 description: body.description,
                 sizes: JSON.stringify(body.sizes || []),
                 colors: JSON.stringify(body.colors || []),
-            }
+                stock: parseInt(body.stock?.toString() || '0'),
+            } as any
         });
 
         return NextResponse.json(product);

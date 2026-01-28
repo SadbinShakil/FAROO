@@ -34,6 +34,8 @@ export interface Order {
     createdAt: Date;
     updatedAt: Date;
     notes?: string;
+    trackingNumber?: string;
+    courierName?: string;
 }
 
 export const ORDERS: Order[] = [

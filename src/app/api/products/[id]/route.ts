@@ -9,6 +9,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
         const product = await prisma.product.update({
             where: { id },
             data: {
+                sku: body.sku,
                 title: body.title,
                 price: body.price ? parseFloat(body.price) : undefined,
                 category: body.category,
@@ -18,7 +19,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
                 description: body.description,
                 sizes: body.sizes ? JSON.stringify(body.sizes) : undefined,
                 colors: body.colors ? JSON.stringify(body.colors) : undefined,
-            }
+                stock: body.stock !== undefined ? parseInt(body.stock.toString()) : undefined,
+            } as any
         });
 
         return NextResponse.json(product);

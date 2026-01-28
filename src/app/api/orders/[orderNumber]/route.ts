@@ -44,16 +44,37 @@ export async function PATCH(
             return NextResponse.json({ error: 'Order not found' }, { status: 404 });
         }
 
-        // ADMIN ACTION: Update Status (Skip time check)
-        if (body.status && !body.action) {
+        // ADMIN ACTION: Update Status & Fulfillment
+        if ((body.status || body.trackingNumber || body.courierName) && !body.action) {
             const updatedOrder = await prisma.order.update({
                 where: { orderNumber },
                 data: {
-                    status: body.status,
-                    // If moving to shipped/delivered, we might want to update payment status too for COD
+                    status: body.status || undefined,
+                    trackingNumber: body.trackingNumber,
+                    courierName: body.courierName,
+                    // If moving to delivered, we might want to update payment status too for COD
                     paymentStatus: body.status === 'delivered' ? 'paid' : undefined
-                }
+                } as any
             });
+
+            // Send Shipping Email Update if applicable
+            if (body.status === 'shipped' || (body.trackingNumber && order.status === 'shipped')) {
+                try {
+                    const { sendShippingUpdateEmail } = await import('@/lib/email');
+                    await sendShippingUpdateEmail({
+                        orderNumber: (updatedOrder as any).orderNumber,
+                        customerName: (updatedOrder as any).customerName,
+                        customerEmail: (updatedOrder as any).customerEmail,
+                        total: (updatedOrder as any).total,
+                        status: (updatedOrder as any).status,
+                        trackingNumber: (updatedOrder as any).trackingNumber || undefined,
+                        courierName: (updatedOrder as any).courierName || undefined
+                    });
+                } catch (emailError) {
+                    console.error('Failed to send shipping update email:', emailError);
+                }
+            }
+
             return NextResponse.json(updatedOrder);
         }
 

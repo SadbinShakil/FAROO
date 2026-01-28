@@ -50,7 +50,8 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await fetch('/api/admin/logout', { method: 'POST' });
         sessionStorage.removeItem('adminAuth');
         router.push('/admin');
     };

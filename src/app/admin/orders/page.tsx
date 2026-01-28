@@ -47,7 +47,8 @@ export default function AdminOrders() {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await fetch('/api/admin/logout', { method: 'POST' });
         sessionStorage.removeItem('adminAuth');
         router.push('/admin');
     };
@@ -298,6 +299,50 @@ export default function AdminOrders() {
                                     )}
                                     <p><strong>Shipping:</strong> ৳{selectedOrder.shipping.toLocaleString()}</p>
                                     <p className={ordersStyles.totalAmount}><strong>Total:</strong> ৳{selectedOrder.total.toLocaleString()}</p>
+                                </div>
+
+                                <div className={ordersStyles.detailSection}>
+                                    <h3>Fulfillment Details</h3>
+                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginTop: '10px' }}>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#666' }}>Courier Name</label>
+                                            <input
+                                                type="text"
+                                                className={ordersStyles.statusSelect}
+                                                value={selectedOrder.courierName || ''}
+                                                onChange={(e) => {
+                                                    const updated = { ...selectedOrder, courierName: e.target.value };
+                                                    setSelectedOrder(updated);
+                                                    fetch(`/api/orders/${selectedOrder.orderNumber}`, {
+                                                        method: 'PATCH',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ courierName: e.target.value })
+                                                    });
+                                                }}
+                                                placeholder="e.g. Pathao"
+                                                style={{ width: '100%', marginTop: '5px' }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label style={{ display: 'block', fontSize: '0.8rem', color: '#666' }}>Tracking ID</label>
+                                            <input
+                                                type="text"
+                                                className={ordersStyles.statusSelect}
+                                                value={selectedOrder.trackingNumber || ''}
+                                                onChange={(e) => {
+                                                    const updated = { ...selectedOrder, trackingNumber: e.target.value };
+                                                    setSelectedOrder(updated);
+                                                    fetch(`/api/orders/${selectedOrder.orderNumber}`, {
+                                                        method: 'PATCH',
+                                                        headers: { 'Content-Type': 'application/json' },
+                                                        body: JSON.stringify({ trackingNumber: e.target.value })
+                                                    });
+                                                }}
+                                                placeholder="e.g. P123456"
+                                                style={{ width: '100%', marginTop: '5px' }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {selectedOrder.notes && (

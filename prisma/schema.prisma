@@ -12,6 +12,7 @@ datasource db {
 
 model Product {
   id          String      @id @default(cuid())
+  sku         String?     @unique
   title       String
   price       Float
   category    String
@@ -21,6 +22,7 @@ model Product {
   description String?
   sizes       String      // Stored as JSON string
   colors      String?     // Stored as JSON string
+  stock       Int         @default(0)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   orderItems  OrderItem[]
@@ -37,10 +39,14 @@ model Order {
   discountCode     String?
   shipping         Float
   total            Float
-  status           String
-  paymentStatus    String
-  paymentMethod    String
+  status           String      // pending, processing, shipped, delivered, cancelled
+  paymentStatus    String      // pending, paid, failed, refunded
+  paymentMethod    String      
   
+  // Fulfillment
+  trackingNumber   String?
+  courierName      String?
+
   // Shipping Address Flattened
   shippingStreet   String
   shippingCity     String

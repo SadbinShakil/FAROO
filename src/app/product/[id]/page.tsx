@@ -3,8 +3,29 @@ import ProductDetailsClient from './ProductDetailsClient';
 import Link from 'next/link';
 import styles from './page.module.css';
 
+import { Metadata } from 'next';
+
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const id = (await params).id;
+    const product = await prisma.product.findUnique({ where: { id } });
+
+    if (!product) {
+        return { title: 'Product Not Found | Faroo' };
+    }
+
+    return {
+        title: `${product.title} | Faroo`,
+        description: product.description?.slice(0, 160) || `Buy ${product.title} at Faroo. Premium fashion for everyone.`,
+        openGraph: {
+            title: product.title,
+            description: product.description || undefined,
+            images: [product.image],
+        },
+    };
+}
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const id = (await params).id;

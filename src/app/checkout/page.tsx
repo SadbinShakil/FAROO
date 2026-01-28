@@ -34,6 +34,43 @@ export default function CheckoutPage() {
         senderPhone: ''
     });
 
+    // Promo Code State
+    const [promoInput, setPromoInput] = useState('');
+    const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, amount: number } | null>(null);
+    const [promoError, setPromoError] = useState('');
+    const [isValidating, setIsValidating] = useState(false);
+
+    const handleApplyDiscount = async () => {
+        if (!promoInput) return;
+        setIsValidating(true);
+        setPromoError('');
+
+        try {
+            const res = await fetch('/api/discounts/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: promoInput, cartTotal })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                setAppliedDiscount({ code: data.code, amount: data.amount });
+                setPromoInput('');
+            } else {
+                setPromoError(data.error);
+            }
+        } catch (err) {
+            setPromoError('Failed to validate code');
+        } finally {
+            setIsValidating(false);
+        }
+    };
+
+    const handleRemoveDiscount = () => {
+        setAppliedDiscount(null);
+        setPromoError('');
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -68,7 +105,9 @@ export default function CheckoutPage() {
             },
             items: items,
             paymentMethod: paymentMethod,
-            notes: notes
+            notes: notes,
+            discountCode: appliedDiscount?.code,
+            discount: appliedDiscount?.amount || 0
         };
 
         try {
@@ -108,7 +147,7 @@ export default function CheckoutPage() {
     }
 
     const shippingCost = 100;
-    const finalTotal = cartTotal + shippingCost;
+    const finalTotal = cartTotal + shippingCost - (appliedDiscount?.amount || 0);
 
     return (
         <div className={styles.checkoutPage}>
@@ -344,10 +383,41 @@ export default function CheckoutPage() {
                                 ))}
                             </div>
 
+                            <div className={styles.summaryItem} style={{ marginTop: '20px', padding: '15px 0', borderTop: '1px solid #eee', borderBottom: '1px solid #eee' }}>
+                                <div style={{ display: 'flex', gap: '8px', width: '100%' }}>
+                                    <input
+                                        type="text"
+                                        placeholder="Promo Code"
+                                        className={styles.input}
+                                        style={{ height: '40px' }}
+                                        value={promoInput}
+                                        onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                                        disabled={!!appliedDiscount}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={appliedDiscount ? handleRemoveDiscount : handleApplyDiscount}
+                                        className="btn"
+                                        style={{ height: '40px', padding: '0 20px', background: appliedDiscount ? '#333' : 'var(--primary)', fontSize: '0.8rem' }}
+                                        disabled={isValidating}
+                                    >
+                                        {isValidating ? '...' : (appliedDiscount ? 'Remove' : 'Apply')}
+                                    </button>
+                                </div>
+                                {promoError && <p style={{ color: '#ef4444', fontSize: '0.75rem', marginTop: '5px' }}>{promoError}</p>}
+                                {appliedDiscount && <p style={{ color: '#10b981', fontSize: '0.75rem', marginTop: '5px' }}>Code {appliedDiscount.code} applied!</p>}
+                            </div>
+
                             <div className={styles.summaryItem}>
                                 <span>Subtotal</span>
                                 <span>৳{cartTotal.toLocaleString()}</span>
                             </div>
+                            {appliedDiscount && (
+                                <div className={styles.summaryItem} style={{ color: '#10b981' }}>
+                                    <span>Discount ({appliedDiscount.code})</span>
+                                    <span>-৳{appliedDiscount.amount.toLocaleString()}</span>
+                                </div>
+                            )}
                             <div className={styles.summaryItem}>
                                 <span>Shipping</span>
                                 <span>৳{shippingCost}</span>
