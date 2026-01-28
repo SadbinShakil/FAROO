@@ -73,15 +73,6 @@ export default function AdminLogin() {
                     <button type="submit" className={styles.loginBtn}>
                         Sign In
                     </button>
-
-                    <div className={styles.hint} style={{
-                        marginTop: '20px',
-                        textAlign: 'center',
-                        fontSize: '0.85rem',
-                        color: '#64748b'
-                    }}>
-                        Demo credentials: admin / admin123
-                    </div>
                 </form>
             </div>
         </div>
