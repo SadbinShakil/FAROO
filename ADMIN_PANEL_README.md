@@ -58,11 +58,11 @@ A comprehensive admin panel for managing your e-commerce store with a beautiful,
 
 ## 🔐 Access Credentials
 
-**Demo Login:**
+**Login:**
 - Username: `admin`
-- Password: `admin123`
+- Password: *Set via your environment variables (`ADMIN_PASSWORD`)*
 
-> ⚠️ **Important:** In production, implement proper authentication with hashed passwords, JWT tokens, and secure session management.
+> ⚠️ **Important:** You must set the `ADMIN_PASSWORD` environment variable in your deployment platform (e.g. Vercel) to access the admin panel.
 
 ## 📁 File Structure
 

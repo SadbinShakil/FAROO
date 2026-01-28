@@ -74,9 +74,6 @@ export default function AdminLogin() {
                         Sign In
                     </button>
 
-                    <div className={styles.hint}>
-                        Demo credentials: admin / admin123
-                    </div>
                 </form>
             </div>
         </div>
