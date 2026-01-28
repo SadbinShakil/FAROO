@@ -6,7 +6,12 @@ export async function POST(request: Request) {
         const { username, password } = await request.json();
 
         // Use environment variable for professional handover
-        const adminPass = process.env.ADMIN_PASSWORD || 'admin123';
+        const adminPass = process.env.ADMIN_PASSWORD;
+
+        if (!adminPass) {
+            console.error('ADMIN_PASSWORD environment variable is not set!');
+            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
+        }
 
         if (username === 'admin' && password === adminPass) {
             // Set a secure cookie
