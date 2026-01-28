@@ -13,11 +13,13 @@ export function middleware(request: NextRequest) {
     }
 
     // Protect sensitive API routes
-    // Allow POST /api/orders (placement) and GET /api/orders/track (customer tracking)
+    // Allow POST /api/orders (placement), GET /api/orders/track (customer tracking), and /api/admin/login
     const isPublicOrderApi = (pathname === '/api/orders' && request.method === 'POST') ||
         (pathname.startsWith('/api/orders/track'));
 
-    if (pathname.startsWith('/api/admin') || (pathname.startsWith('/api/orders') && !isPublicOrderApi)) {
+    const isLoginApi = pathname === '/api/admin/login';
+
+    if ((pathname.startsWith('/api/admin') && !isLoginApi) || (pathname.startsWith('/api/orders') && !isPublicOrderApi)) {
         if (!adminAuth || adminAuth.value !== 'true') {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
