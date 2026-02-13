@@ -28,7 +28,8 @@ export async function GET(request: Request) {
         const parsedProducts = products.map((p: any) => ({
             ...p,
             sizes: JSON.parse(p.sizes || '[]'),
-            colors: JSON.parse(p.colors || '[]')
+            colors: JSON.parse(p.colors || '[]'),
+            images: JSON.parse(p.images || '[]')
         }));
 
         return NextResponse.json(parsedProducts);
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
                 description: body.description,
                 sizes: JSON.stringify(body.sizes || []),
                 colors: JSON.stringify(body.colors || []),
+                images: JSON.stringify(body.images || []),
                 stock: parseInt(body.stock?.toString() || '0'),
             } as any
         });

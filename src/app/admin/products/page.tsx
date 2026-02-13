@@ -16,6 +16,7 @@ interface Product {
     section: string;
     subcategory: string;
     image: string;
+    images?: string[];
     description: string;
     sizes: string[];
     colors: string[];
@@ -44,6 +45,7 @@ export default function AdminProducts() {
         subcategory: 'T-Shirts',
         description: '',
         image: '',
+        images: [] as string[],
         sizes: '',
         colors: '',
         stock: '0'
@@ -84,6 +86,11 @@ export default function AdminProducts() {
     const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
 
+        if (formData.images.length >= 5) {
+            alert('You can only upload up to 5 images per product.');
+            return;
+        }
+
         setUploading(true);
         const file = e.target.files[0];
 
@@ -99,7 +106,12 @@ export default function AdminProducts() {
             const result = await res.json();
 
             if (res.ok) {
-                setFormData(prev => ({ ...prev, image: result.url }));
+                const newImages = [...formData.images, result.url];
+                setFormData(prev => ({
+                    ...prev,
+                    images: newImages,
+                    image: newImages[0] // Set primary image to the first one
+                }));
             } else {
                 alert(`Upload failed: ${result.error || 'Please ensure Vercel Blob is configured.'}`);
             }
@@ -109,6 +121,15 @@ export default function AdminProducts() {
         } finally {
             setUploading(false);
         }
+    };
+
+    const removeImage = (indexToRemove: number) => {
+        const newImages = formData.images.filter((_, index) => index !== indexToRemove);
+        setFormData(prev => ({
+            ...prev,
+            images: newImages,
+            image: newImages.length > 0 ? newImages[0] : ''
+        }));
     };
 
     const openAddModal = () => {
@@ -128,6 +149,7 @@ export default function AdminProducts() {
             subcategory: product.subcategory,
             description: product.description || '',
             image: product.image,
+            images: product.images || (product.image ? [product.image] : []),
             sizes: (product.sizes || []).join(', '),
             colors: (product.colors || []).join(', '),
             stock: (product.stock || 0).toString()
@@ -350,21 +372,46 @@ export default function AdminProducts() {
                                 </div>
 
                                 <div>
-                                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Product Image</label>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Product Images (Max 5)</label>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                                         <input
                                             type="file"
                                             accept="image/*"
                                             onChange={handleImageUpload}
-                                            style={{ flex: 1 }}
+                                            style={{ flex: 1, minWidth: '200px' }}
+                                            disabled={formData.images.length >= 5}
                                         />
                                         {uploading && <span>Uploading...</span>}
                                     </div>
-                                    {formData.image && (
-                                        <div style={{ marginTop: '10px', width: '100px', height: '100px', position: 'relative', border: '1px solid #ddd', borderRadius: '4px', overflow: 'hidden' }}>
-                                            <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                        </div>
-                                    )}
+                                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px', flexWrap: 'wrap' }}>
+                                        {formData.images.map((img, idx) => (
+                                            <div key={idx} style={{ position: 'relative', width: '100px', height: '100px', border: '1px solid #ddd', borderRadius: '4px', overflow: 'hidden' }}>
+                                                <img src={img} alt={`Preview ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(idx)}
+                                                    style={{
+                                                        position: 'absolute',
+                                                        top: '2px',
+                                                        right: '2px',
+                                                        background: 'rgba(255,0,0,0.7)',
+                                                        color: '#fff',
+                                                        border: 'none',
+                                                        borderRadius: '50%',
+                                                        width: '20px',
+                                                        height: '20px',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '12px',
+                                                        cursor: 'pointer'
+                                                    }}
+                                                >
+                                                    <X size={12} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
 
                                 <button type="submit" className={productsStyles.addBtn} style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>

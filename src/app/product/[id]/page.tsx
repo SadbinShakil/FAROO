@@ -50,7 +50,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     const parsedProduct = {
         ...product,
         sizes: JSON.parse(product.sizes || '[]'),
-        colors: JSON.parse(product.colors || '[]')
+        colors: JSON.parse(product.colors || '[]'),
+        images: JSON.parse(product.images || '[]')
     };
 
     // Fetch related products
@@ -65,7 +66,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     const parsedRelatedProducts = relatedDbProducts.map((p: any) => ({
         ...p,
         sizes: JSON.parse(p.sizes || '[]'),
-        colors: JSON.parse(p.colors || '[]')
+        colors: JSON.parse(p.colors || '[]'),
+        images: JSON.parse(p.images || '[]')
     }));
 
     return (

@@ -28,6 +28,7 @@ interface Product {
     section: string;
     subcategory: string;
     image: string;
+    images?: string[];
     description?: string | null;
     sizes: string[];
     colors: string[];
@@ -44,7 +45,15 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
     const [quantity, setQuantity] = useState(1);
     const [isAdding, setIsAdding] = useState(false);
     const [isAdded, setIsAdded] = useState(false);
+    const [activeImage, setActiveImage] = useState<string>(product.image);
     const [openAccordion, setOpenAccordion] = useState<string | null>('details');
+
+    const productImages = product.images?.length ? product.images : [product.image];
+
+    // Reset active image when product changes
+    if (activeImage !== product.image && !productImages.includes(activeImage)) {
+        setActiveImage(productImages[0]);
+    }
 
     const sizes = product.sizes?.length ? product.sizes : ['S', 'M', 'L', 'XL'];
     const colors = product.colors?.length ? product.colors : ['White', 'Black'];
@@ -91,7 +100,7 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                     <div className={styles.imageSection}>
                         <div className={styles.mainImage}>
                             <Image
-                                src={product.image}
+                                src={activeImage || product.image}
                                 alt={product.title}
                                 fill
                                 priority
@@ -99,9 +108,15 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                             />
                         </div>
                         <div className={styles.imageGallery}>
-                            {[1, 2, 3].map((i) => (
-                                <div key={i} className={`${styles.galleryThumb} ${i === 1 ? styles.active : ''}`}>
-                                    <Image src={product.image} alt="Thumbnail" fill style={{ objectFit: 'cover' }} />
+
+                            {productImages.map((img, i) => (
+                                <div
+                                    key={i}
+                                    className={`${styles.galleryThumb} ${activeImage === img ? styles.active : ''}`}
+                                    onClick={() => setActiveImage(img)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <Image src={img} alt="Thumbnail" fill style={{ objectFit: 'cover' }} />
                                 </div>
                             ))}
                         </div>

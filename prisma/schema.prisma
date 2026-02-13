@@ -19,6 +19,7 @@ model Product {
   section     String
   subcategory String
   image       String
+  images      String?     // Stored as JSON string
   description String?
   sizes       String      // Stored as JSON string
   colors      String?     // Stored as JSON string
