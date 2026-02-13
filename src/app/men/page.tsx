@@ -4,7 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Truck, ShieldCheck, RotateCcw, Headset, ArrowUpRight } from 'lucide-react';
 import { prisma } from '@/lib/prisma';
-import styles from '../Page.module.css'; // Reusing styles from main page but might need tweaks
+import styles from '../Page.module.css'; // Reusing page styles
+import heroStyles from '../../components/Hero.module.css'; // Using Hero component styles
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -31,86 +32,68 @@ export default async function MenPage() {
 
     return (
         <main>
-            {/* Custom Hero for Men */}
-            <section className={styles.section} style={{
-                minHeight: '80vh',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: 'radial-gradient(circle at center, #2c3e50 0%, #000000 100%)',
-                color: '#fff',
-                position: 'relative',
-                padding: '0 20px'
-            }}>
-                <div className="container" style={{ textAlign: 'center', maxWidth: '800px', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
-                    {/* Brand Logo Integration */}
-                    <div style={{
-                        width: '120px',
-                        height: '120px',
-                        position: 'relative',
-                        marginBottom: '24px',
-                        borderRadius: '50%',
-                        overflow: 'hidden',
-                        boxShadow: '0 0 30px rgba(255,255,255,0.1)',
-                        border: '2px solid rgba(255,255,255,0.1)'
-                    }}>
-                        <Image
-                            src="/makoo.jpg"
-                            alt="MAAKO"
-                            fill
-                            style={{ objectFit: 'cover' }}
-                            priority
-                        />
+            {/* Custom Hero for Men - Matching Faroo Structure */}
+            {/* Custom Hero for Men - Matching Faroo Structure */}
+            <section className={heroStyles.hero} style={{ background: '#f8f9fa' }}> {/* Slight difference in bg if needed */}
+                <div className={heroStyles.container}>
+                    <div className={heroStyles.content}>
+                        <span className={heroStyles.label} style={{ color: '#000' }}>MAAKO Official</span>
+                        <h1 className={heroStyles.title} style={{ color: '#111' }}>
+                            Defining <br />
+                            <span className="text-gradient" style={{
+                                background: 'linear-gradient(to right, #000, #555)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent'
+                            }}>Masculinity</span>
+                        </h1>
+                        <p className={heroStyles.subtitle} style={{ color: '#444' }}>
+                            Bold, sophisticated, and uncompromising. Experience the pinnacle of modern men's fashion with our new collection.
+                        </p>
+                        <div style={{ display: 'flex', gap: '16px' }}>
+                            <Link href="/shop?section=men" className="btn-luxe" style={{ background: '#000', color: '#fff' }}>
+                                Shop Collection <ArrowUpRight size={18} />
+                            </Link>
+                            <Link href="/about" className="btn-outline" style={{ color: '#000', borderColor: '#000' }}>
+                                Our Manifesto
+                            </Link>
+                        </div>
                     </div>
 
-                    <h1 style={{
-                        fontSize: 'clamp(2.5rem, 6vw, 5rem)',
-                        fontWeight: 900,
-                        margin: '0 0 20px',
-                        lineHeight: 1,
-                        background: 'linear-gradient(to right, #fff, #9ca3af)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        textTransform: 'uppercase',
-                        letterSpacing: '-1px'
-                    }}>
-                        Defining <br /> Masculinity
-                    </h1>
+                    <div className={heroStyles.imageSection}>
+                        <div className={heroStyles.imageWrapper}>
+                            <Image
+                                src="/hero.png" // Using the alternate hero image
+                                alt="MAAKO Men's Collection"
+                                fill
+                                priority
+                                style={{ objectFit: 'cover' }}
+                            />
+                        </div>
 
-                    <p style={{
-                        fontSize: '1.1rem',
-                        opacity: 0.8,
-                        marginBottom: '32px',
-                        lineHeight: 1.6,
-                        maxWidth: '500px',
-                        margin: '0 auto 40px'
-                    }}>
-                        Bold, sophisticated, and uncompromising. <br />
-                        The pinnacle of modern fashion.
-                    </p>
-
-                    <Link href="/shop?section=men" className="btn-luxe" style={{
-                        background: '#fff',
-                        color: '#000',
-                        padding: '14px 36px',
-                        fontSize: '0.9rem',
-                        fontWeight: 600,
-                        letterSpacing: '2px',
-                        textTransform: 'uppercase'
-                    }}>
-                        Shop The Collection
-                    </Link>
+                        {/* Floating Badge */}
+                        <div className={heroStyles.floatingCard} style={{ left: '-40px', bottom: '60px' }}>
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                overflow: 'hidden',
+                                position: 'relative',
+                                border: '1px solid #eee'
+                            }}>
+                                <Image src="/makoo.jpg" alt="Icon" fill style={{ objectFit: 'cover' }} />
+                            </div>
+                            <div>
+                                <h4 style={{ color: '#000' }}>MAAKO Series</h4>
+                                <span>Premium Collection</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Optional: Overlay texture or grain could be added here */}
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'url("/noise.png")', // If noise texture exists, otherwise transparent
-                    opacity: 0.05,
-                    pointerEvents: 'none'
-                }} />
+                <div className={heroStyles.scrollIndicator}>
+                    <span className={heroStyles.scrollText} style={{ color: '#888' }}>Scroll</span>
+                    <div className={heroStyles.scrollLine} style={{ background: 'linear-gradient(to bottom, #000, transparent)' }}></div>
+                </div>
             </section>
 
             {/* Featured Products */}
