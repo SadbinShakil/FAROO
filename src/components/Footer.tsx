@@ -1,17 +1,34 @@
+'use client';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Instagram, Facebook, Twitter, Mail, ArrowRight } from 'lucide-react';
 import styles from './Footer.module.css';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+    const pathname = usePathname();
+    const isMaako = pathname?.startsWith('/men');
+
+    const brandName = isMaako ? 'MAAKO' : 'Faroo Official';
+    const brandLogo = isMaako ? '/maako-logo.png' : '/faroo-logo.jpg';
+    const brandDesc = isMaako
+        ? 'MAAKO defines the modern man with bold aesthetics and uncompromising quality.'
+        : 'Founded in Dhaka, Faroo Official is a luxury fashion label dedicated to refined minimalism and sustainable craftsmanship.';
+
     return (
         <footer className={styles.footer}>
             <div className={styles.container}>
                 <div className={styles.brand}>
-                    <Image src="/faroo-logo.jpg" alt="Faroo Official" width={60} height={60} style={{ borderRadius: '50%' }} />
+                    <Image
+                        src={brandLogo}
+                        alt={brandName}
+                        width={60}
+                        height={60}
+                        style={{ borderRadius: '50%', objectFit: 'cover' }}
+                        onError={(e) => e.currentTarget.style.display = 'none'}
+                    />
                     <p className={styles.brandInfo}>
-                        Founded in Dhaka, Faroo Official is a luxury fashion label dedicated to
-                        refined minimalism and sustainable craftsmanship.
+                        {brandDesc}
                     </p>
                     <div className={styles.socials} style={{ marginTop: '30px' }}>
                         <a href="https://www.instagram.com/_faroo_official/" target="_blank" rel="noopener noreferrer">

@@ -40,22 +40,22 @@ export default async function Home() {
                 fill
               />
               <div className={styles.categoryOverlay}>
-                <h3>The Women's Edit</h3>
+                <h3>FAROO (Women)</h3>
                 <p>Timeless silhouettes refined for the modern woman.</p>
-                <span className={styles.categoryLink}>Discover Now</span>
+                <span className={styles.categoryLink}>Enter Shop</span>
               </div>
             </Link>
 
-            <Link href="/shop?section=men" className={styles.categoryCard}>
+            <Link href="/men" className={styles.categoryCard}>
               <Image
                 src="/collections/men.png"
                 alt="Men's Collection"
                 fill
               />
               <div className={styles.categoryOverlay}>
-                <h3>The Men's Series</h3>
+                <h3>MAAKO (Men)</h3>
                 <p>Contemporary classics built on quality and character.</p>
-                <span className={styles.categoryLink}>Discover Now</span>
+                <span className={styles.categoryLink}>Enter MAAKO</span>
               </div>
             </Link>
           </div>

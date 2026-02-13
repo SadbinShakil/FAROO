@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Suspense } from 'react';
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -23,7 +24,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <CartProvider>
-          <Header />
+          <Suspense fallback={<div style={{ height: '80px' }} />}>
+            <Header />
+          </Suspense>
           <CartSidebar />
           {children}
           <Footer />

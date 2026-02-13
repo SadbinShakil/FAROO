@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { ShoppingBag, Search, User, Menu, X, LayoutDashboard, Package, ShoppingCart, Tag, LogOut, ChevronRight } from 'lucide-react';
 import styles from './Header.module.css';
 import { useCart } from '@/context/CartContext';
@@ -16,8 +16,26 @@ export default function Header() {
     const [isMounted, setIsMounted] = useState(false);
     const router = useRouter();
     const pathname = usePathname();
+    const searchParams = useSearchParams();
 
+    const isMenSection = searchParams.get('section') === 'men';
+    const isMaako = pathname.startsWith('/men') || isMenSection;
     const isAdmin = pathname.startsWith('/admin');
+
+    // Dynamic Branding
+    const BRAND = isMaako ? {
+        name: 'MAAKO',
+        logo: '/maako-logo.png', // User must upload this
+        homeLink: '/men',
+        shopLink: '/shop?section=men',
+        collectionsLink: '/shop?section=men' // Temporary until collections page is ready
+    } : {
+        name: 'FAROO',
+        logo: '/faroo-logo.jpg',
+        homeLink: '/',
+        shopLink: '/shop?section=women',
+        collectionsLink: '/collections'
+    };
 
     useEffect(() => {
         setIsMounted(true);
@@ -54,14 +72,42 @@ export default function Header() {
                     </button>
 
                     {/* Logo */}
-                    <Link href="/" className={styles.logo}>
-                        <Image
-                            src="/faroo-logo.jpg"
-                            alt="Faroo Official"
-                            width={50}
-                            height={50}
-                            priority
-                        />
+                    {/* Logo - Dynamic Branding */}
+                    <Link href={BRAND.homeLink} className={styles.logo}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{
+                                width: '50px',
+                                height: '50px',
+                                position: 'relative',
+                                overflow: 'hidden',
+                                borderRadius: isMaako ? '50%' : '0'
+                            }}>
+                                <Image
+                                    src={BRAND.logo}
+                                    alt={`${BRAND.name} Official`}
+                                    fill
+                                    style={{ objectFit: 'cover' }}
+                                    priority
+                                    onError={(e) => {
+                                        // Fallback if image not found
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                />
+                                {/* Fallback Text if image fails */}
+                                <span style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    fontWeight: 'bold',
+                                    zIndex: -1
+                                }}>
+                                    {BRAND.name[0]}
+                                </span>
+                            </div>
+                            {/* Optional: Show text if needed */}
+                            {/* <span className="font-bold tracking-widest">{BRAND.name}</span> */}
+                        </div>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -94,11 +140,22 @@ export default function Header() {
                             </>
                         ) : (
                             <>
-                                <Link href="/" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
-                                <Link href="/shop" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
-                                <Link href="/collections" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>
-                                <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
-                                <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
+                                <>
+                                    <Link href={BRAND.homeLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
+                                    <Link href={BRAND.shopLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
+                                    {!isMaako && <Link href={BRAND.collectionsLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>}
+                                    <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
+                                    <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
+                                    {/* Switcher Link */}
+                                    <Link
+                                        href={isMaako ? '/' : '/men'}
+                                        className={styles.navLink}
+                                        onClick={() => setIsMenuOpen(false)}
+                                        style={{ fontWeight: 'bold', color: isMaako ? '#000' : 'var(--primary)' }}
+                                    >
+                                        {isMaako ? 'Visit FAROO (Women)' : 'Visit MAAKO (Men)'}
+                                    </Link>
+                                </>
                             </>
                         )}
                     </nav>
