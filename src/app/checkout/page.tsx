@@ -29,6 +29,7 @@ export default function CheckoutPage() {
         city: '',
         state: '',
         zip: '',
+        deliveryArea: 'inside', // Default to Inside Dhaka
         // Payment related
         trxId: '',
         senderPhone: ''
@@ -39,6 +40,10 @@ export default function CheckoutPage() {
     const [appliedDiscount, setAppliedDiscount] = useState<{ code: string, amount: number } | null>(null);
     const [promoError, setPromoError] = useState('');
     const [isValidating, setIsValidating] = useState(false);
+
+    // Derived state
+    const shippingCost = formData.deliveryArea === 'inside' ? 70 : 150;
+    const finalTotal = cartTotal + shippingCost - (appliedDiscount?.amount || 0);
 
     const handleApplyDiscount = async () => {
         if (!promoInput) return;
@@ -106,6 +111,7 @@ export default function CheckoutPage() {
             items: items,
             paymentMethod: paymentMethod,
             notes: notes,
+            shippingCost: shippingCost,
             discountCode: appliedDiscount?.code,
             discount: appliedDiscount?.amount || 0
         };
@@ -146,8 +152,7 @@ export default function CheckoutPage() {
         );
     }
 
-    const shippingCost = 100;
-    const finalTotal = cartTotal + shippingCost - (appliedDiscount?.amount || 0);
+    // Variables are defined at the top
 
     return (
         <div className={styles.checkoutPage}>
@@ -255,6 +260,36 @@ export default function CheckoutPage() {
                                         onChange={handleChange}
                                     />
                                 </div>
+                            </div>
+                        </div>
+
+                        {/* Delivery Area Section */}
+                        <div className={styles.section}>
+                            <h2>Delivery Area</h2>
+                            <div className={styles.paymentMethods}>
+                                <label className={`${styles.paymentMethod} ${formData.deliveryArea === 'inside' ? styles.selected : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="deliveryArea"
+                                        value="inside"
+                                        checked={formData.deliveryArea === 'inside'}
+                                        onChange={() => setFormData({ ...formData, deliveryArea: 'inside' })}
+                                    />
+                                    <span className={styles.paymentLabel}>Inside Dhaka</span>
+                                    <span style={{ fontWeight: 'bold' }}>৳70</span>
+                                </label>
+
+                                <label className={`${styles.paymentMethod} ${formData.deliveryArea === 'outside' ? styles.selected : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="deliveryArea"
+                                        value="outside"
+                                        checked={formData.deliveryArea === 'outside'}
+                                        onChange={() => setFormData({ ...formData, deliveryArea: 'outside' })}
+                                    />
+                                    <span className={styles.paymentLabel}>Outside Dhaka</span>
+                                    <span style={{ fontWeight: 'bold' }}>৳150</span>
+                                </label>
                             </div>
                         </div>
 
@@ -437,7 +472,7 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                 </form>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }

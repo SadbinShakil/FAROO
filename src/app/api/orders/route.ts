@@ -93,7 +93,7 @@ export async function POST(request: Request) {
 
             // 4. Calculate totals (re-calculate on server for security)
             const subtotal = body.items.reduce((sum: number, item: any) => sum + (item.price * item.quantity), 0);
-            const shipping = 100; // Flat rate for now
+            const shipping = typeof body.shippingCost === 'number' ? body.shippingCost : 150; // Use provided shipping or default to 150
             const total = subtotal + shipping - (body.discount || 0);
 
             // 5. Create Order
