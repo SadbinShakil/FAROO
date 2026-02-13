@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
-import { ShoppingBag, Search, User, Menu, X, LayoutDashboard, Package, ShoppingCart, Tag, LogOut, ChevronRight } from 'lucide-react';
+import { ShoppingBag, Search, User, Menu, X, LayoutDashboard, Package, ShoppingCart, Tag, LogOut } from 'lucide-react';
 import styles from './Header.module.css';
 import { useCart } from '@/context/CartContext';
 
@@ -53,6 +53,54 @@ export default function Header() {
             setIsSearchOpen(false);
         }
     };
+
+    const renderNavLinks = () => (
+        <>
+            {isAdmin ? (
+                <>
+                    <Link href="/admin/dashboard" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                        <LayoutDashboard size={18} className={styles.mobileOnly} /> Dashboard
+                    </Link>
+                    <Link href="/admin/products" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                        <Package size={18} className={styles.mobileOnly} /> Products
+                    </Link>
+                    <Link href="/admin/orders" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                        <ShoppingCart size={18} className={styles.mobileOnly} /> Orders
+                    </Link>
+                    <Link href="/admin/discounts" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
+                        <Tag size={18} className={styles.mobileOnly} /> Discounts
+                    </Link>
+                    <button
+                        onClick={() => {
+                            sessionStorage.removeItem('adminAuth');
+                            router.push('/admin');
+                            setIsMenuOpen(false);
+                        }}
+                        className={`${styles.navLink} ${styles.logoutLink}`}
+                        style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
+                    >
+                        <LogOut size={18} className={styles.mobileOnly} /> Logout
+                    </button>
+                </>
+            ) : (
+                <>
+                    <Link href={BRAND.homeLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
+                    <Link href={BRAND.shopLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
+                    {!isMaako && <Link href={BRAND.collectionsLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>}
+                    <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
+                    <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
+                    <Link
+                        href={isMaako ? '/' : '/men'}
+                        className={styles.navLink}
+                        onClick={() => setIsMenuOpen(false)}
+                        style={{ fontWeight: 'bold', color: isMaako ? '#000' : 'var(--primary)' }}
+                    >
+                        {isMaako ? 'Visit FAROO (Women)' : 'Visit MAAKO (Men)'}
+                    </Link>
+                </>
+            )}
+        </>
+    );
 
     return (
         <>
@@ -105,59 +153,12 @@ export default function Header() {
                                     {BRAND.name[0]}
                                 </span>
                             </div>
-                            {/* Optional: Show text if needed */}
-                            {/* <span className="font-bold tracking-widest">{BRAND.name}</span> */}
                         </div>
                     </Link>
 
                     {/* Desktop Navigation */}
-                    <nav className={`${styles.nav} ${isMenuOpen ? styles.navOpen : ''}`}>
-                        {isAdmin ? (
-                            <>
-                                <Link href="/admin/dashboard" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-                                    <LayoutDashboard size={18} className={styles.mobileOnly} /> Dashboard
-                                </Link>
-                                <Link href="/admin/products" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-                                    <Package size={18} className={styles.mobileOnly} /> Products
-                                </Link>
-                                <Link href="/admin/orders" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-                                    <ShoppingCart size={18} className={styles.mobileOnly} /> Orders
-                                </Link>
-                                <Link href="/admin/discounts" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>
-                                    <Tag size={18} className={styles.mobileOnly} /> Discounts
-                                </Link>
-                                <button
-                                    onClick={() => {
-                                        sessionStorage.removeItem('adminAuth');
-                                        router.push('/admin');
-                                        setIsMenuOpen(false);
-                                    }}
-                                    className={`${styles.navLink} ${styles.logoutLink}`}
-                                    style={{ width: '100%', textAlign: 'left', border: 'none', background: 'none' }}
-                                >
-                                    <LogOut size={18} className={styles.mobileOnly} /> Logout
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <>
-                                    <Link href={BRAND.homeLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
-                                    <Link href={BRAND.shopLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
-                                    {!isMaako && <Link href={BRAND.collectionsLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>}
-                                    <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
-                                    <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
-                                    {/* Switcher Link */}
-                                    <Link
-                                        href={isMaako ? '/' : '/men'}
-                                        className={styles.navLink}
-                                        onClick={() => setIsMenuOpen(false)}
-                                        style={{ fontWeight: 'bold', color: isMaako ? '#000' : 'var(--primary)' }}
-                                    >
-                                        {isMaako ? 'Visit FAROO (Women)' : 'Visit MAAKO (Men)'}
-                                    </Link>
-                                </>
-                            </>
-                        )}
+                    <nav className={styles.desktopNav}>
+                        {renderNavLinks()}
                     </nav>
 
                     {/* Actions */}
@@ -207,6 +208,26 @@ export default function Header() {
                 className={`${styles.overlay} ${isMenuOpen ? styles.overlayVisible : ''}`}
                 onClick={() => setIsMenuOpen(false)}
             />
+
+            {/* Mobile Menu Container */}
+            <div className={`${styles.mobileMenu} ${isMenuOpen ? styles.mobileMenuOpen : ''}`}>
+                {/* Mobile Menu Header */}
+                <div className={styles.mobileMenuHeader}>
+                    <span className={styles.mobileMenuTitle}>MENU</span>
+                    <button
+                        onClick={() => setIsMenuOpen(false)}
+                        className={styles.closeBtn}
+                        aria-label="Close Menu"
+                    >
+                        <X size={24} />
+                    </button>
+                </div>
+
+                {/* Mobile Navigation Links */}
+                <div className={styles.mobileNavLinks}>
+                    {renderNavLinks()}
+                </div>
+            </div>
         </>
     );
 }
