@@ -32,19 +32,70 @@ export default async function MenPage() {
     return (
         <main>
             {/* Custom Hero for Men */}
-            <section className={styles.section} style={{ padding: '100px 0', background: '#111', color: '#fff' }}>
-                <div className="container" style={{ textAlign: 'center' }}>
-                    <span className="text-gradient font-bold uppercase tracking-widest text-sm">MAAKO Official</span>
-                    <h1 style={{ fontSize: '4rem', fontWeight: 800, margin: '20px 0', lineHeight: 1.1 }}>
-                        DEFINING <br /> MASCULINITY
+            <section className={styles.section} style={{
+                minHeight: '80vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'radial-gradient(circle at center, #2c3e50 0%, #000000 100%)',
+                color: '#fff',
+                position: 'relative',
+                padding: '0 20px'
+            }}>
+                <div className="container" style={{ textAlign: 'center', maxWidth: '800px', zIndex: 2 }}>
+                    <span style={{
+                        opacity: 0.7,
+                        letterSpacing: '4px',
+                        textTransform: 'uppercase',
+                        fontSize: '0.9rem',
+                        display: 'block',
+                        marginBottom: '20px'
+                    }}>
+                        MAAKO Official
+                    </span>
+                    <h1 style={{
+                        fontSize: 'clamp(3rem, 8vw, 6rem)',
+                        fontWeight: 900,
+                        margin: '0 0 30px',
+                        lineHeight: 1,
+                        background: 'linear-gradient(to right, #fff, #9ca3af)',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        textTransform: 'uppercase'
+                    }}>
+                        Defining <br /> Masculinity
                     </h1>
-                    <p style={{ maxWidth: '600px', margin: '0 auto 40px', opacity: 0.8 }}>
-                        Bold, sophisticated, and uncompromising. MAAKO represents the pinnacle of men's fashion.
+                    <p style={{
+                        fontSize: '1.2rem',
+                        opacity: 0.8,
+                        marginBottom: '40px',
+                        lineHeight: 1.6,
+                        maxWidth: '600px',
+                        margin: '0 auto 50px'
+                    }}>
+                        Bold, sophisticated, and uncompromising. <br />
+                        MAAKO represents the pinnacle of men's modern fashion.
                     </p>
-                    <Link href="/shop?section=men" className="btn-luxe" style={{ background: '#fff', color: '#000' }}>
-                        Shop MAAKO Collection
+                    <Link href="/shop?section=men" className="btn-luxe" style={{
+                        background: '#fff',
+                        color: '#000',
+                        padding: '16px 40px',
+                        fontSize: '1rem',
+                        fontWeight: 600,
+                        letterSpacing: '1px'
+                    }}>
+                        Shop The Collection
                     </Link>
                 </div>
+
+                {/* Optional: Overlay texture or grain could be added here */}
+                <div style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'url("/noise.png")', // If noise texture exists, otherwise transparent
+                    opacity: 0.05,
+                    pointerEvents: 'none'
+                }} />
             </section>
 
             {/* Featured Products */}

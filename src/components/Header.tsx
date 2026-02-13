@@ -25,7 +25,7 @@ export default function Header() {
     // Dynamic Branding
     const BRAND = isMaako ? {
         name: 'MAAKO',
-        logo: '/maako-logo.png', // User must upload this
+        logo: '/makoo.jpg', // User uploaded this
         homeLink: '/men',
         shopLink: '/shop?section=men',
         collectionsLink: '/shop?section=men' // Temporary until collections page is ready

@@ -10,7 +10,7 @@ export default function Footer() {
     const isMaako = pathname?.startsWith('/men');
 
     const brandName = isMaako ? 'MAAKO' : 'Faroo Official';
-    const brandLogo = isMaako ? '/maako-logo.png' : '/faroo-logo.jpg';
+    const brandLogo = isMaako ? '/makoo.jpg' : '/faroo-logo.jpg';
     const brandDesc = isMaako
         ? 'MAAKO defines the modern man with bold aesthetics and uncompromising quality.'
         : 'Founded in Dhaka, Faroo Official is a luxury fashion label dedicated to refined minimalism and sustainable craftsmanship.';
