@@ -42,47 +42,62 @@ export default async function MenPage() {
                 position: 'relative',
                 padding: '0 20px'
             }}>
-                <div className="container" style={{ textAlign: 'center', maxWidth: '800px', zIndex: 2 }}>
-                    <span style={{
-                        opacity: 0.7,
-                        letterSpacing: '4px',
-                        textTransform: 'uppercase',
-                        fontSize: '0.9rem',
-                        display: 'block',
-                        marginBottom: '20px'
+                <div className="container" style={{ textAlign: 'center', maxWidth: '800px', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+
+                    {/* Brand Logo Integration */}
+                    <div style={{
+                        width: '120px',
+                        height: '120px',
+                        position: 'relative',
+                        marginBottom: '24px',
+                        borderRadius: '50%',
+                        overflow: 'hidden',
+                        boxShadow: '0 0 30px rgba(255,255,255,0.1)',
+                        border: '2px solid rgba(255,255,255,0.1)'
                     }}>
-                        MAAKO Official
-                    </span>
+                        <Image
+                            src="/makoo.jpg"
+                            alt="MAAKO"
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            priority
+                        />
+                    </div>
+
                     <h1 style={{
-                        fontSize: 'clamp(3rem, 8vw, 6rem)',
+                        fontSize: 'clamp(2.5rem, 6vw, 5rem)',
                         fontWeight: 900,
-                        margin: '0 0 30px',
+                        margin: '0 0 20px',
                         lineHeight: 1,
                         background: 'linear-gradient(to right, #fff, #9ca3af)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
-                        textTransform: 'uppercase'
+                        textTransform: 'uppercase',
+                        letterSpacing: '-1px'
                     }}>
                         Defining <br /> Masculinity
                     </h1>
+
                     <p style={{
-                        fontSize: '1.2rem',
+                        fontSize: '1.1rem',
                         opacity: 0.8,
-                        marginBottom: '40px',
+                        marginBottom: '32px',
                         lineHeight: 1.6,
-                        maxWidth: '600px',
-                        margin: '0 auto 50px'
+                        maxWidth: '500px',
+                        margin: '0 auto 40px'
                     }}>
                         Bold, sophisticated, and uncompromising. <br />
-                        MAAKO represents the pinnacle of men's modern fashion.
+                        The pinnacle of modern fashion.
                     </p>
+
                     <Link href="/shop?section=men" className="btn-luxe" style={{
                         background: '#fff',
                         color: '#000',
-                        padding: '16px 40px',
-                        fontSize: '1rem',
+                        padding: '14px 36px',
+                        fontSize: '0.9rem',
                         fontWeight: 600,
-                        letterSpacing: '1px'
+                        letterSpacing: '2px',
+                        textTransform: 'uppercase'
                     }}>
                         Shop The Collection
                     </Link>
