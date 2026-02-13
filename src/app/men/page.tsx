@@ -62,7 +62,7 @@ export default async function MenPage() {
                     <div className={heroStyles.imageSection}>
                         <div className={heroStyles.imageWrapper}>
                             <Image
-                                src="/hero.png" // Using the alternate hero image
+                                src="/collections/men.png" // Using the correct male image
                                 alt="MAAKO Men's Collection"
                                 fill
                                 priority
