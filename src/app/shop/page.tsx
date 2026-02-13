@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma';
 import ShopClient from './ShopClient';
+import { Suspense } from 'react';
 
 // Force dynamic rendering so new products appear immediately
 export const dynamic = 'force-dynamic';
@@ -15,5 +16,9 @@ export default async function ShopPage() {
         colors: JSON.parse(p.colors || '[]')
     }));
 
-    return <ShopClient initialProducts={products} />;
+    return (
+        <Suspense fallback={<div>Loading shop...</div>}>
+            <ShopClient initialProducts={products} />
+        </Suspense>
+    );
 }

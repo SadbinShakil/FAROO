@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function Home() {
   const dbProducts = await prisma.product.findMany({
+    where: { section: 'women' },
     take: 4,
     orderBy: { createdAt: 'desc' }
   });
@@ -46,7 +47,7 @@ export default async function Home() {
               </div>
             </Link>
 
-            <Link href="/shop" className={styles.categoryCard}>
+            <Link href="/shop?section=women" className={styles.categoryCard}>
               <Image
                 src="/hero-new.png"
                 alt="New Arrivals"

@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import ProductCard from '@/components/ProductCard';
 import { Filter, SlidersHorizontal, ChevronDown } from 'lucide-react';
 import styles from './page.module.css';
+import { useSearchParams } from 'next/navigation';
 
 interface Product {
     id: string;
@@ -20,7 +21,14 @@ interface Product {
 }
 
 export default function ShopClient({ initialProducts }: { initialProducts: Product[] }) {
-    const [selectedSections, setSelectedSections] = useState<string[]>([]);
+    const searchParams = useSearchParams();
+    const initialSection = searchParams.get('section');
+
+    // Initialize section filter if present in URL
+    const [selectedSections, setSelectedSections] = useState<string[]>(
+        initialSection ? [initialSection] : []
+    );
+
     const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
     const [sortBy, setSortBy] = useState<'newest' | 'price-low-high' | 'price-high-low'>('newest');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -69,12 +77,18 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         );
     };
 
+    const pageTitle = selectedSections.length === 1 && selectedSections[0] === 'men'
+        ? 'MAAKO Collection'
+        : selectedSections.length === 1 && selectedSections[0] === 'women'
+            ? 'FAROO Collection'
+            : 'All Collections';
+
     return (
         <div className={styles.shopPage}>
             <div className={styles.header}>
                 <div className="container">
                     <span className="text-gradient uppercase tracking-widest text-sm font-bold">Catalogue</span>
-                    <h1>All Collections</h1>
+                    <h1>{pageTitle}</h1>
                     <p>Meticulously crafted pieces for your everyday luxury.</p>
                 </div>
             </div>
