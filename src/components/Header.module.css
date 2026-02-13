@@ -325,6 +325,8 @@
 }
 
 /* Default Mobile Menu Hidden on Desktop */
-.mobileMenu {
-    display: none;
+@media (min-width: 901px) {
+    .mobileMenu {
+        display: none;
+    }
 }
