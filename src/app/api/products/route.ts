@@ -61,6 +61,7 @@ export async function POST(request: Request) {
                 sizes: JSON.stringify(body.sizes || []),
                 colors: JSON.stringify(body.colors || []),
                 images: JSON.stringify(body.images || []),
+                sizeGuide: body.sizeGuide,
                 stock: parseInt(body.stock?.toString() || '0'),
             } as any
         });

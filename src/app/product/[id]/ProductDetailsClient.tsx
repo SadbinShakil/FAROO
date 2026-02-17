@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import ProductCard from '@/components/ProductCard';
+import SizeGuideModal from '@/components/SizeGuideModal';
 import styles from './page.module.css';
 import { useCart } from '@/context/CartContext';
 import {
@@ -32,6 +33,7 @@ interface Product {
     description?: string | null;
     sizes: string[];
     colors: string[];
+    sizeGuide?: Record<string, any> | null;
 }
 
 interface ProductDetailsClientProps {
@@ -47,6 +49,7 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
     const [isAdded, setIsAdded] = useState(false);
     const [activeImage, setActiveImage] = useState<string>(product.image);
     const [openAccordion, setOpenAccordion] = useState<string | null>('details');
+    const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
     const productImages = product.images?.length ? product.images : [product.image];
 
@@ -155,7 +158,7 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                         <div className="mb-8">
                             <div className={styles.selectorLabel}>
                                 <span>Select Size: <span className="text-primary">{selectedSize}</span></span>
-                                <button className="text-[10px] underline tracking-widest">SIzeguide</button>
+                                <button className="text-[10px] underline tracking-widest" onClick={() => setIsSizeGuideOpen(true)}>Size Guide</button>
                             </div>
                             <div className={styles.optionsGrid}>
                                 {sizes.map(size => (
@@ -253,6 +256,13 @@ export default function ProductDetailsClient({ product, relatedProducts }: Produ
                         </div>
                     </div>
                 )}
+
+                <SizeGuideModal
+                    isOpen={isSizeGuideOpen}
+                    onClose={() => setIsSizeGuideOpen(false)}
+                    category={product.subcategory || product.category}
+                    sizeGuide={product.sizeGuide || undefined}
+                />
             </div>
         </div>
     );

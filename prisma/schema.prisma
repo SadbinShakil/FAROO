@@ -23,6 +23,7 @@ model Product {
   description String?
   sizes       String      // Stored as JSON string
   colors      String?     // Stored as JSON string
+  sizeGuide   String?     // Stored as JSON string
   stock       Int         @default(0)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt

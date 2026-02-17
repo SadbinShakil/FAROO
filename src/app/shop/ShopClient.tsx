@@ -33,13 +33,15 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
     const [sortBy, setSortBy] = useState<'newest' | 'price-low-high' | 'price-high-low'>('newest');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-    const sections = useMemo(() => {
-        return Array.from(new Set(initialProducts.map(p => p.section)));
-    }, [initialProducts]);
+    const sections = ['men', 'women', 'lifestyle'];
 
     const subcategories = useMemo(() => {
-        return Array.from(new Set(initialProducts.map(p => p.subcategory)));
-    }, [initialProducts]);
+        const relevantProducts = selectedSections.length > 0
+            ? initialProducts.filter(p => selectedSections.includes(p.section))
+            : initialProducts;
+
+        return Array.from(new Set(relevantProducts.map(p => p.subcategory)));
+    }, [initialProducts, selectedSections]);
 
     const filteredProducts = useMemo(() => {
         let result = initialProducts.filter(product => {
@@ -82,6 +84,82 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
         : selectedSections.length === 1 && selectedSections[0] === 'women'
             ? 'FAROO Collection'
             : 'All Collections';
+
+    const FILTER_CATEGORIES = {
+        men: [
+            {
+                title: "Topwear",
+                items: ["T-Shirt", "Polo", "Hoodie", "Jacket", "Sweater", "Blazer", "Suit"]
+            },
+            {
+                title: "Shirts",
+                items: ["Casual Shirt", "Formal Shirt", "Printed Shirt", "Half Sleeve", "Full Sleeve", "Denim Shirt"]
+            },
+            {
+                title: "Bottoms",
+                items: ["Jeans", "Chinos", "Cargo", "Joggers", "Shorts", "Formal Pant", "Trouser"]
+            },
+            {
+                title: "Ethnic Wear",
+                items: ["Panjabi", "Kabli", "Waistcoat", "Vest"]
+            },
+            {
+                title: "Accessories",
+                items: ["Perfume", "Belt", "Wallet", "Footwear", "Mask", "Cap", "Tie"]
+            }
+        ],
+        women: [
+            {
+                title: "Western Wear",
+                items: ["Tops", "T-Shirt", "Gown", "Summer Blazer", "Casual Shirt", "Long Shirt", "Co-Ord Set"]
+            },
+            {
+                title: "Traditional Wear",
+                items: ["Single Kameez", "Kurti", "Kaftan", "Salwar Kameez", "Tunic", "Dupatta"]
+            },
+            {
+                title: "Bottoms",
+                items: ["Jeans", "Palazzo", "Skirt", "Leggings", "Trouser", "Joggers"]
+            },
+            {
+                title: "Winterwear",
+                items: ["Poncho", "Cardigan", "Hoodie", "Jacket", "Shawl", "Shrug"]
+            }
+        ],
+        lifestyle: [
+            {
+                title: "Personal",
+                items: ["Bags", "Sunglass", "Caps", "Wallet", "Perfume"]
+            },
+            {
+                title: "Exclusive",
+                items: ["Privilege Card", "Gold Card"]
+            }
+        ]
+    };
+
+    const currentFilters = selectedSections.includes('men') && !selectedSections.includes('women') && !selectedSections.includes('lifestyle')
+        ? FILTER_CATEGORIES.men
+        : selectedSections.includes('women') && !selectedSections.includes('men') && !selectedSections.includes('lifestyle')
+            ? FILTER_CATEGORIES.women
+            : selectedSections.includes('lifestyle') && !selectedSections.includes('men') && !selectedSections.includes('women')
+                ? FILTER_CATEGORIES.lifestyle
+                : null;
+
+    // Helper to normalize strings for comparison (remove spaces, lowercase, remove hyphens)
+    const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    // Get all normalized categories currently displayed in the main groups
+    const coveredCategories = new Set<string>();
+    if (currentFilters) {
+        currentFilters.forEach(section =>
+            section.items.forEach(item => coveredCategories.add(normalize(item)))
+        );
+    }
+
+    // Identify "Other" categories that are NOT covered by the main groups
+    // We treat "T-Shirt", "T shirt", "tshirt" all as the same if they normalize to "tshirt"
+    const otherCategories = subcategories.filter(sub => !coveredCategories.has(normalize(sub)));
 
     return (
         <div className={styles.shopPage}>
@@ -128,19 +206,56 @@ export default function ShopClient({ initialProducts }: { initialProducts: Produ
                             ))}
                         </div>
 
-                        <div className={styles.filterSection}>
-                            <h3>Category</h3>
-                            {subcategories.map(sub => (
-                                <label key={sub} className={styles.filterOption}>
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedSubcategories.includes(sub)}
-                                        onChange={() => toggleSubcategory(sub)}
-                                    />
-                                    <span>{sub}</span>
-                                </label>
-                            ))}
-                        </div>
+                        {/* Dynamic Categories */}
+                        {currentFilters ? (
+                            currentFilters.map((group) => (
+                                <div key={group.title} className={styles.filterSection}>
+                                    <h3>{group.title}</h3>
+                                    {group.items.map(sub => (
+                                        <label key={sub} className={styles.filterOption}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedSubcategories.includes(sub)}
+                                                onChange={() => toggleSubcategory(sub)}
+                                            />
+                                            <span>{sub}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            ))
+                        ) : (
+                            // Fallback for mixed/all views: Show discovered subcategories from DB
+                            <div className={styles.filterSection}>
+                                <h3>Categories</h3>
+                                {subcategories.map(sub => (
+                                    <label key={sub} className={styles.filterOption}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubcategories.includes(sub)}
+                                            onChange={() => toggleSubcategory(sub)}
+                                        />
+                                        <span>{sub}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Show any DB subcategories NOT covered by the groups (Uncategorized) */}
+                        {currentFilters && otherCategories.length > 0 && (
+                            <div className={styles.filterSection}>
+                                <h3>Other Categories</h3>
+                                {otherCategories.map(sub => (
+                                    <label key={sub} className={styles.filterOption}>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedSubcategories.includes(sub)}
+                                            onChange={() => toggleSubcategory(sub)}
+                                        />
+                                        <span>{sub}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        )}
 
                         <button
                             className={styles.applyBtn}

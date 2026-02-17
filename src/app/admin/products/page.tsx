@@ -18,6 +18,7 @@ interface Product {
     image: string;
     images?: string[];
     description: string;
+    sizeGuide?: string;
     sizes: string[];
     colors: string[];
     stock: number;
@@ -29,12 +30,13 @@ export default function AdminProducts() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [filterSection, setFilterSection] = useState<'all' | 'women' | 'men'>('all');
+    const [filterSection, setFilterSection] = useState<'all' | 'women' | 'men' | 'lifestyle'>('all');
 
     // Modal & Form State
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [colorInput, setColorInput] = useState('');
 
     const initialFormState = {
         sku: '',
@@ -48,7 +50,8 @@ export default function AdminProducts() {
         images: [] as string[],
         sizes: '',
         colors: '',
-        stock: '0'
+        sizeGuide: {} as Record<string, any>,
+        stock: '0',
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -152,6 +155,7 @@ export default function AdminProducts() {
             images: product.images || (product.image ? [product.image] : []),
             sizes: (product.sizes || []).join(', '),
             colors: (product.colors || []).join(', '),
+            sizeGuide: product.sizeGuide ? JSON.parse(product.sizeGuide) : {},
             stock: (product.stock || 0).toString()
         });
         setShowModal(true);
@@ -176,7 +180,8 @@ export default function AdminProducts() {
             price: parseFloat(formData.price),
             stock: parseInt(formData.stock),
             sizes: formData.sizes.split(',').map(s => s.trim()).filter(Boolean),
-            colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean)
+            colors: formData.colors.split(',').map(c => c.trim()).filter(Boolean),
+            sizeGuide: JSON.stringify(formData.sizeGuide)
         };
 
         try {
@@ -232,6 +237,73 @@ export default function AdminProducts() {
 
     if (!isAuthenticated) return <div className={styles.loading}>Loading...</div>;
 
+    const SIZE_OPTIONS = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '28', '30', '32', '34', '36', '38', '40', '42', '44', 'Free Size'];
+
+    // Derived from the Shop filter logic for consistency
+    const SUBCATEGORY_OPTIONS = {
+        men: [
+            "T-Shirt", "Polo", "Hoodie", "Jacket", "Sweater", "Blazer", "Suit",
+            "Casual Shirt", "Formal Shirt", "Printed Shirt", "Half Sleeve", "Full Sleeve", "Denim Shirt",
+            "Jeans", "Chinos", "Cargo", "Joggers", "Shorts", "Formal Pant", "Trouser",
+            "Panjabi", "Kabli", "Waistcoat", "Vest",
+            "Perfume", "Belt", "Wallet", "Footwear", "Mask", "Cap", "Tie"
+        ],
+        women: [
+            "Tops", "T-Shirt", "Gown", "Summer Blazer", "Casual Shirt", "Long Shirt", "Co-Ord Set",
+            "Single Kameez", "Kurti", "Kaftan", "Salwar Kameez", "Tunic", "Dupatta",
+            "Jeans", "Palazzo", "Skirt", "Leggings", "Trouser", "Joggers",
+            "Poncho", "Cardigan", "Hoodie", "Jacket", "Shawl", "Shrug"
+        ],
+        lifestyle: [
+            "Bags", "Sunglass", "Caps", "Wallet", "Perfume", "Privilege Card", "Gold Card"
+        ]
+    };
+
+    const toggleSize = (size: string) => {
+        const currentSizes = formData.sizes ? formData.sizes.split(',').map(s => s.trim()).filter(Boolean) : [];
+        let newSizes;
+        if (currentSizes.includes(size)) {
+            newSizes = currentSizes.filter(s => s !== size);
+        } else {
+            newSizes = [...currentSizes, size];
+        }
+        setFormData({ ...formData, sizes: newSizes.join(', ') });
+    };
+
+    const COLOR_OPTIONS = [
+        "Black", "White", "Gray", "Navy", "Blue", "Royal Blue", "Sky Blue",
+        "Red", "Maroon", "Wine",
+        "Green", "Olive", "Bottle Green",
+        "Beige", "Cream", "Brown", "Tan", "Mustard",
+        "Pink", "Dusty Pink", "Magenta",
+        "Purple", "Lavender",
+        "Yellow", "Orange", "Gold", "Silver", "Multicolor"
+    ];
+
+    const toggleColor = (color: string) => {
+        const currentColors = formData.colors ? formData.colors.split(',').map(c => c.trim()).filter(Boolean) : [];
+        let newColors;
+        if (currentColors.includes(color)) {
+            newColors = currentColors.filter(c => c !== color);
+        } else {
+            newColors = [...currentColors, color];
+        }
+        setFormData({ ...formData, colors: newColors.join(', ') });
+    };
+
+    const handleSizeGuideChange = (size: string, field: string, value: string) => {
+        setFormData(prev => ({
+            ...prev,
+            sizeGuide: {
+                ...prev.sizeGuide,
+                [size]: {
+                    ...(prev.sizeGuide[size] || {}),
+                    [field]: value
+                }
+            }
+        }));
+    };
+
     return (
         <div className={styles.container}>
             <aside className={styles.sidebar}>
@@ -268,6 +340,7 @@ export default function AdminProducts() {
                         <button className={filterSection === 'all' ? productsStyles.filterActive : productsStyles.filterBtn} onClick={() => setFilterSection('all')}>All ({products.length})</button>
                         <button className={filterSection === 'women' ? productsStyles.filterActive : productsStyles.filterBtn} onClick={() => setFilterSection('women')}>Women</button>
                         <button className={filterSection === 'men' ? productsStyles.filterActive : productsStyles.filterBtn} onClick={() => setFilterSection('men')}>Men</button>
+                        <button className={filterSection === 'lifestyle' ? productsStyles.filterActive : productsStyles.filterBtn} onClick={() => setFilterSection('lifestyle')}>Lifestyle</button>
                     </div>
                 </div>
 
@@ -338,11 +411,20 @@ export default function AdminProducts() {
                                         <select value={formData.section} onChange={e => setFormData({ ...formData, section: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}>
                                             <option value="women">Women</option>
                                             <option value="men">Men</option>
+                                            <option value="lifestyle">Lifestyle</option>
                                         </select>
                                     </div>
                                     <div>
-                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Category</label>
-                                        <input required type="text" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Category (Broad)</label>
+                                        <select
+                                            value={formData.category}
+                                            onChange={e => setFormData({ ...formData, category: e.target.value })}
+                                            style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                        >
+                                            <option value="Clothing">Clothing</option>
+                                            <option value="Footwear">Footwear</option>
+                                            <option value="Accessories">Accessories</option>
+                                        </select>
                                     </div>
                                     <div>
                                         <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Stock Count</label>
@@ -352,7 +434,19 @@ export default function AdminProducts() {
 
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Subcategory / Type</label>
-                                    <input required type="text" value={formData.subcategory} onChange={e => setFormData({ ...formData, subcategory: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                    <select
+                                        required
+                                        value={formData.subcategory}
+                                        onChange={e => setFormData({ ...formData, subcategory: e.target.value })}
+                                        style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                    >
+                                        <option value="">Select Subcategory</option>
+                                        {(formData.section === 'men' ? SUBCATEGORY_OPTIONS.men :
+                                            formData.section === 'lifestyle' ? SUBCATEGORY_OPTIONS.lifestyle :
+                                                SUBCATEGORY_OPTIONS.women).map(sub => (
+                                                    <option key={sub} value={sub}>{sub}</option>
+                                                ))}
+                                    </select>
                                 </div>
 
                                 <div>
@@ -362,14 +456,124 @@ export default function AdminProducts() {
 
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                                     <div>
-                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Sizes (comma separated)</label>
-                                        <input type="text" placeholder="S, M, L, XL" value={formData.sizes} onChange={e => setFormData({ ...formData, sizes: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Sizes</label>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                                            {SIZE_OPTIONS.map(size => (
+                                                <label key={size} style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                    padding: '4px 8px',
+                                                    border: '1px solid #eee',
+                                                    borderRadius: '4px',
+                                                    background: formData.sizes.includes(size) ? '#eee' : '#fff',
+                                                    cursor: 'pointer'
+                                                }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.sizes.includes(size)}
+                                                        onChange={() => toggleSize(size)}
+                                                    />
+                                                    <span style={{ fontSize: '0.9rem' }}>{size}</span>
+                                                </label>
+                                            ))}
+                                        </div>
                                     </div>
                                     <div>
-                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Colors (comma separated)</label>
-                                        <input type="text" placeholder="Red, Blue, Green" value={formData.colors} onChange={e => setFormData({ ...formData, colors: e.target.value })} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '4px' }} />
+                                        <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Colors</label>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '150px', overflowY: 'auto', padding: '4px', border: '1px solid #eee', borderRadius: '4px' }}>
+                                            {COLOR_OPTIONS.map(color => (
+                                                <label key={color} style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                    padding: '4px 8px',
+                                                    border: '1px solid #eee',
+                                                    borderRadius: '4px',
+                                                    background: formData.colors.includes(color) ? '#e6f7ff' : '#fff',
+                                                    cursor: 'pointer',
+                                                    minWidth: 'fit-content'
+                                                }}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.colors.includes(color)}
+                                                        onChange={() => toggleColor(color)}
+                                                    />
+                                                    <span style={{ fontSize: '0.9rem' }}>{color}</span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                        <div style={{ marginTop: '8px', display: 'flex', gap: '8px' }}>
+                                            <input
+                                                type="text"
+                                                placeholder="Add custom color..."
+                                                value={colorInput}
+                                                onChange={(e) => setColorInput(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.preventDefault();
+                                                        if (colorInput.trim()) {
+                                                            toggleColor(colorInput.trim());
+                                                            setColorInput('');
+                                                        }
+                                                    }
+                                                }}
+                                                style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (colorInput.trim()) {
+                                                        toggleColor(colorInput.trim());
+                                                        setColorInput('');
+                                                    }
+                                                }}
+                                                className={productsStyles.addBtn}
+                                                style={{ padding: '0 16px', height: 'auto' }}
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                                            {formData.colors.split(',').map(c => c.trim()).filter(c => c && !COLOR_OPTIONS.includes(c)).map(c => (
+                                                <span key={c} style={{ background: '#eee', padding: '4px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.9rem' }}>
+                                                    {c}
+                                                    <button type="button" onClick={() => toggleColor(c)} style={{ border: 'none', background: 'none', cursor: 'pointer', fontSize: '1.2rem', lineHeight: 0.5, color: '#666' }}>&times;</button>
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
+
+                                {formData.sizes && (
+                                    <div style={{ marginBottom: '16px' }}>
+                                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>Size Guide (Inches)</label>
+                                        <div style={{ overflowX: 'auto', border: '1px solid #eee', borderRadius: '4px' }}>
+                                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
+                                                <thead>
+                                                    <tr style={{ background: '#f9f9f9', borderBottom: '1px solid #eee' }}>
+                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Size</th>
+                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Bust</th>
+                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Waist</th>
+                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Length</th>
+                                                        <th style={{ padding: '8px', textAlign: 'left' }}>Hip</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {formData.sizes.split(',').map(s => s.trim()).filter(Boolean).map(size => (
+                                                        <tr key={size} style={{ borderBottom: '1px solid #eee' }}>
+                                                            <td style={{ padding: '8px', fontWeight: 'bold' }}>{size}</td>
+                                                            <td style={{ padding: '8px' }}><input type="text" placeholder="34.0" value={formData.sizeGuide[size]?.bust || ''} onChange={e => handleSizeGuideChange(size, 'bust', e.target.value)} style={{ width: '60px', padding: '4px', border: '1px solid #ddd', borderRadius: '4px' }} /></td>
+                                                            <td style={{ padding: '8px' }}><input type="text" placeholder="28.0" value={formData.sizeGuide[size]?.waist || ''} onChange={e => handleSizeGuideChange(size, 'waist', e.target.value)} style={{ width: '60px', padding: '4px', border: '1px solid #ddd', borderRadius: '4px' }} /></td>
+                                                            <td style={{ padding: '8px' }}><input type="text" placeholder="52.0" value={formData.sizeGuide[size]?.length || ''} onChange={e => handleSizeGuideChange(size, 'length', e.target.value)} style={{ width: '60px', padding: '4px', border: '1px solid #ddd', borderRadius: '4px' }} /></td>
+                                                            <td style={{ padding: '8px' }}><input type="text" placeholder="36.0" value={formData.sizeGuide[size]?.hip || ''} onChange={e => handleSizeGuideChange(size, 'hip', e.target.value)} style={{ width: '60px', padding: '4px', border: '1px solid #ddd', borderRadius: '4px' }} /></td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div>
                                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>Product Images (Max 5)</label>

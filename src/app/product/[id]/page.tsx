@@ -51,12 +51,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         ...product,
         sizes: JSON.parse(product.sizes || '[]'),
         colors: JSON.parse(product.colors || '[]'),
-        images: JSON.parse(product.images || '[]')
+        images: JSON.parse(product.images || '[]'),
+        sizeGuide: (product as any).sizeGuide ? JSON.parse((product as any).sizeGuide) : null,
     };
 
     // Fetch related products
     const relatedDbProducts = await prisma.product.findMany({
         where: {
+            section: product.section,
             subcategory: product.subcategory,
             id: { not: product.id }
         },

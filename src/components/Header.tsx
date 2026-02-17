@@ -71,7 +71,8 @@ export default function Header() {
                         <Tag size={18} className={styles.mobileOnly} /> Discounts
                     </Link>
                     <button
-                        onClick={() => {
+                        onClick={async () => {
+                            await fetch('/api/admin/logout', { method: 'POST' });
                             sessionStorage.removeItem('adminAuth');
                             router.push('/admin');
                             setIsMenuOpen(false);
@@ -86,6 +87,7 @@ export default function Header() {
                 <>
                     <Link href={BRAND.homeLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Home</Link>
                     <Link href={BRAND.shopLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Shop</Link>
+                    <Link href="/shop?section=lifestyle" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Lifestyle</Link>
                     {!isMaako && <Link href={BRAND.collectionsLink} className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Collections</Link>}
                     <Link href="/track-order" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Track</Link>
                     <Link href="/about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>About</Link>
@@ -95,17 +97,18 @@ export default function Header() {
                         onClick={() => setIsMenuOpen(false)}
                         style={{ fontWeight: 'bold', color: isMaako ? '#000' : 'var(--primary)' }}
                     >
-                        {isMaako ? 'Visit FAROO (Women)' : 'Visit MAAKO (Men)'}
+                        {isMaako ? 'Return to FAROO (Women)' : 'Visit MAAKO (By Faroo)'}
                     </Link>
                 </>
-            )}
+            )
+            }
         </>
     );
 
     return (
         <>
             <div className={styles.topBar}>
-                Free Shipping on Orders Over ৳5,000 | New Season Collection Live
+                Welcome to FAROO & MAAKO | Redefining Elegance
             </div>
 
             <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ''}`}>
@@ -153,6 +156,12 @@ export default function Header() {
                                     {BRAND.name[0]}
                                 </span>
                             </div>
+                            {isMaako && (
+                                <div style={{ display: 'flex', flexDirection: 'column', lineHeight: '1' }}>
+                                    <span style={{ fontSize: '18px', fontWeight: 'bold', letterSpacing: '1px' }}>MAAKO</span>
+                                    <span style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '2px', opacity: 0.7 }}>By Faroo</span>
+                                </div>
+                            )}
                         </div>
                     </Link>
 
@@ -200,12 +209,13 @@ export default function Header() {
                             {isMounted && cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
                         </button>
                     </div>
-                </div>
-            </header>
+                </div >
+            </header >
 
             {/* Mobile Menu Backdrop */}
-            <div
-                className={`${styles.overlay} ${isMenuOpen ? styles.overlayVisible : ''}`}
+            < div
+                className={`${styles.overlay} ${isMenuOpen ? styles.overlayVisible : ''}`
+                }
                 onClick={() => setIsMenuOpen(false)}
             />
 

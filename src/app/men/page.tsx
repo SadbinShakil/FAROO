@@ -37,7 +37,7 @@ export default async function MenPage() {
             <section className={heroStyles.hero} style={{ background: '#f8f9fa' }}> {/* Slight difference in bg if needed */}
                 <div className={heroStyles.container}>
                     <div className={heroStyles.content}>
-                        <span className={heroStyles.label} style={{ color: '#000' }}>MAAKO Official</span>
+                        <span className={heroStyles.label} style={{ color: '#000' }}>MAAKO by Faroo</span>
                         <h1 className={heroStyles.title} style={{ color: '#111' }}>
                             Defining <br />
                             <span className="text-gradient" style={{

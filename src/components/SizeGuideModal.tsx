@@ -8,9 +8,10 @@ interface SizeGuideModalProps {
     isOpen: boolean;
     onClose: () => void;
     category: string;
+    sizeGuide?: Record<string, any>;
 }
 
-export default function SizeGuideModal({ isOpen, onClose, category }: SizeGuideModalProps) {
+export default function SizeGuideModal({ isOpen, onClose, category, sizeGuide }: SizeGuideModalProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
@@ -42,45 +43,72 @@ export default function SizeGuideModal({ isOpen, onClose, category }: SizeGuideM
 
                 <div className={styles.tableWrapper}>
                     <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th>Size</th>
-                                <th>Chest</th>
-                                <th>Length</th>
-                                <th>Sleeve</th>
-                                <th>Shoulder</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td className={styles.sizeLabel}>M</td>
-                                <td>38-40</td>
-                                <td>27</td>
-                                <td>8</td>
-                                <td>17</td>
-                            </tr>
-                            <tr>
-                                <td className={styles.sizeLabel}>L</td>
-                                <td>40-42</td>
-                                <td>28</td>
-                                <td>8.5</td>
-                                <td>18</td>
-                            </tr>
-                            <tr>
-                                <td className={styles.sizeLabel}>XL</td>
-                                <td>42-44</td>
-                                <td>29</td>
-                                <td>9</td>
-                                <td>19</td>
-                            </tr>
-                            <tr>
-                                <td className={styles.sizeLabel}>XXL</td>
-                                <td>44-46</td>
-                                <td>30</td>
-                                <td>9.5</td>
-                                <td>20</td>
-                            </tr>
-                        </tbody>
+                        {sizeGuide ? (
+                            <>
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Bust</th>
+                                        <th>Waist</th>
+                                        <th>Length</th>
+                                        <th>Hip</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {Object.entries(sizeGuide).map(([size, measurements]: [string, any]) => (
+                                        <tr key={size}>
+                                            <td className={styles.sizeLabel}>{size}</td>
+                                            <td>{measurements.bust || '-'}</td>
+                                            <td>{measurements.waist || '-'}</td>
+                                            <td>{measurements.length || '-'}</td>
+                                            <td>{measurements.hip || '-'}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </>
+                        ) : (
+                            <>
+                                <thead>
+                                    <tr>
+                                        <th>Size</th>
+                                        <th>Chest</th>
+                                        <th>Length</th>
+                                        <th>Sleeve</th>
+                                        <th>Shoulder</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td className={styles.sizeLabel}>M</td>
+                                        <td>38-40</td>
+                                        <td>27</td>
+                                        <td>8</td>
+                                        <td>17</td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.sizeLabel}>L</td>
+                                        <td>40-42</td>
+                                        <td>28</td>
+                                        <td>8.5</td>
+                                        <td>18</td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.sizeLabel}>XL</td>
+                                        <td>42-44</td>
+                                        <td>29</td>
+                                        <td>9</td>
+                                        <td>19</td>
+                                    </tr>
+                                    <tr>
+                                        <td className={styles.sizeLabel}>XXL</td>
+                                        <td>44-46</td>
+                                        <td>30</td>
+                                        <td>9.5</td>
+                                        <td>20</td>
+                                    </tr>
+                                </tbody>
+                            </>
+                        )}
                     </table>
                 </div>
 

@@ -5,14 +5,19 @@ export function middleware(request: NextRequest) {
     const adminAuth = request.cookies.get('admin_session');
     const { pathname } = request.nextUrl;
 
-    // Protect admin routes
+    // 1. Redirect to dashboard if trying to access login page while already authenticated
+    if (pathname === '/admin' && adminAuth?.value === 'true') {
+        return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
+
+    // 2. Protect admin routes (dashboard, products, etc.)
     if (pathname.startsWith('/admin') && pathname !== '/admin') {
         if (!adminAuth || adminAuth.value !== 'true') {
             return NextResponse.redirect(new URL('/admin', request.url));
         }
     }
 
-    // Protect sensitive API routes
+    // 3. Protect sensitive API routes
     // Allow POST /api/orders (placement), GET /api/orders/track (customer tracking), and /api/admin/login
     const isPublicOrderApi = (pathname === '/api/orders' && request.method === 'POST') ||
         (pathname.startsWith('/api/orders/track'));
@@ -25,7 +30,16 @@ export function middleware(request: NextRequest) {
         }
     }
 
-    return NextResponse.next();
+    // 4. Add Cache-Control headers to disable caching for admin pages (prevents back-button viewing after logout)
+    const response = NextResponse.next();
+
+    if (pathname.startsWith('/admin')) {
+        response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        response.headers.set('Pragma', 'no-cache');
+        response.headers.set('Expires', '0');
+    }
+
+    return response;
 }
 
 export const config = {

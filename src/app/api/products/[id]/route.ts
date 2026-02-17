@@ -20,6 +20,7 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
                 sizes: body.sizes ? JSON.stringify(body.sizes) : undefined,
                 colors: body.colors ? JSON.stringify(body.colors) : undefined,
                 images: body.images ? JSON.stringify(body.images) : undefined,
+                sizeGuide: body.sizeGuide,
                 stock: body.stock !== undefined ? parseInt(body.stock.toString()) : undefined,
             } as any
         });

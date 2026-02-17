@@ -59,6 +59,22 @@ export default async function Home() {
                 <span className={styles.categoryLink}>Shop Latest</span>
               </div>
             </Link>
+
+            <Link href="/shop?section=lifestyle" className={styles.categoryCard}>
+              <div style={{ position: 'absolute', inset: 0, background: '#1a1a1a' }} />
+              {/* Placeholder until image is added, or use a generic one */}
+              <Image
+                src="/lifestyle.jpg"
+                alt="Lifestyle"
+                fill
+                style={{ objectFit: 'cover', opacity: 0.8 }}
+              />
+              <div className={styles.categoryOverlay}>
+                <h3>Lifestyle</h3>
+                <p>Premium accessories. Bags, Perfumes & More.</p>
+                <span className={styles.categoryLink}>Explore</span>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
