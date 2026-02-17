@@ -55,15 +55,23 @@ export default function SizeGuideModal({ isOpen, onClose, category, sizeGuide }:
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {Object.entries(sizeGuide).map(([size, measurements]: [string, any]) => (
-                                        <tr key={size}>
-                                            <td className={styles.sizeLabel}>{size}</td>
-                                            <td>{measurements.bust || '-'}</td>
-                                            <td>{measurements.waist || '-'}</td>
-                                            <td>{measurements.length || '-'}</td>
-                                            <td>{measurements.hip || '-'}</td>
-                                        </tr>
-                                    ))}
+                                    {Object.entries(sizeGuide)
+                                        .sort(([a], [b]) => {
+                                            const order = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL', '2XL', '3XL'];
+                                            const indexA = order.indexOf(a);
+                                            const indexB = order.indexOf(b);
+                                            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                                            return a.localeCompare(b, undefined, { numeric: true });
+                                        })
+                                        .map(([size, measurements]: [string, any]) => (
+                                            <tr key={size}>
+                                                <td className={styles.sizeLabel}>{size}</td>
+                                                <td>{measurements.bust || '-'}</td>
+                                                <td>{measurements.waist || '-'}</td>
+                                                <td>{measurements.length || '-'}</td>
+                                                <td>{measurements.hip || '-'}</td>
+                                            </tr>
+                                        ))}
                                 </tbody>
                             </>
                         ) : (

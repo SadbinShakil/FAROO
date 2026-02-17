@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <CartProvider>
           <Suspense fallback={<div style={{ height: '80px' }} />}>
             <Header />
