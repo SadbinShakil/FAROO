@@ -19,7 +19,7 @@ export default async function MenPage() {
     const dbProducts = await prisma.product.findMany({
         where: {
             section: 'men',
-            isArchived: false
+            isArchived: false // Filtering out archived products from display
         },
         take: 4,
         orderBy: { createdAt: 'desc' }
