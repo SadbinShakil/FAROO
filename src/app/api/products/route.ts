@@ -19,7 +19,10 @@ export async function GET(request: Request) {
         }
 
         const products = await prisma.product.findMany({
-            where: whereClause,
+            where: {
+                ...whereClause,
+                isArchived: false
+            },
             take: featured === 'true' ? 4 : undefined,
             orderBy: { createdAt: 'desc' }
         });

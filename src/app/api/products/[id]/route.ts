@@ -35,13 +35,16 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const id = (await params).id;
-        await prisma.product.delete({
-            where: { id }
+
+        // Soft delete (archive) instead of hard delete to preserve order history
+        await prisma.product.update({
+            where: { id },
+            data: { isArchived: true }
         });
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Error deleting product:', error);
-        return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+        console.error('Error archiving product:', error);
+        return NextResponse.json({ error: 'Failed to archive product' }, { status: 500 });
     }
 }

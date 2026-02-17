@@ -215,15 +215,22 @@ export default function AdminProducts() {
         }
     };
 
-    const handleDelete = async (id: string) => {
-        if (confirm('Are you sure you want to delete this product?')) {
+    const handleDelete = async (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        e.preventDefault();
+
+        if (window.confirm('Are you sure you want to delete this product?')) {
             try {
                 const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
                 if (res.ok) {
                     setProducts(products.filter(p => p.id !== id));
+                } else {
+                    const errData = await res.json();
+                    alert(errData.error || 'Failed to delete product');
                 }
             } catch (error) {
                 console.error(error);
+                alert('Error deleting product');
             }
         }
     };
@@ -352,7 +359,7 @@ export default function AdminProducts() {
                                     <img src={product.image} alt={product.title} />
                                     <div className={productsStyles.productActions}>
                                         <button className={productsStyles.editBtn} onClick={() => openEditModal(product)}><Edit size={18} /></button>
-                                        <button className={productsStyles.deleteBtn} onClick={() => handleDelete(product.id)}><Trash2 size={18} /></button>
+                                        <button className={productsStyles.deleteBtn} onClick={(e) => handleDelete(e, product.id)}><Trash2 size={18} /></button>
                                     </div>
                                 </div>
                                 <div className={productsStyles.productInfo}>
