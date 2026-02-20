@@ -329,6 +329,10 @@
 }
 
 @media (max-width: 768px) {
+    .imageSection {
+        position: static;
+    }
+
     .productTitle {
         font-size: 2.25rem;
     }
